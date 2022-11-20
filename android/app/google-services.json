@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "507808919373",
+    "project_id": "queke-fcm",
+    "storage_bucket": "queke-fcm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507808919373:android:f402f51af5ba7442769104",
+        "android_client_info": {
+          "package_name": "com.example.earth_queke"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "507808919373-lk0hh60f5v8ccsuac2s49mfeuk2mtidg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTLAkjI2Nb9ih4j-x_2l1M6oLXyUjlaNE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "507808919373-lk0hh60f5v8ccsuac2s49mfeuk2mtidg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
