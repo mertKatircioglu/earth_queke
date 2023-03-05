@@ -1,6 +1,7 @@
 import 'package:earth_queke/model/data_model.dart';
 import 'package:earth_queke/widgets/item_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../global/globals.dart';
 
 class EarthQuekeItem extends StatelessWidget {
@@ -33,18 +34,35 @@ class EarthQuekeItem extends StatelessWidget {
                   children: [
                     const Text("Merkes Üssü: ",
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         color: kPrymaryColor,
                       ),
                     ),
                     Expanded(
                       child: Text(earthQuakeViewModel!.title.toString(),
                         style:const TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios, color: kPrymaryColor, size: 20,)
+                    const Icon(Icons.arrow_forward_ios, color: kPrymaryColor, size: 20,)
+                  ],
+                ),
+                const SizedBox(height: 5,),
+                Row(
+                  children: [
+                    const Text("Tarih-Saat: ",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: kPrymaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 2,),
+                    Text(  DateFormat('dd-MM-yyyy hh:mm a').format(DateTime.parse(earthQuakeViewModel!.date!.replaceAll(".", "-"))),
+                      style:const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 5,),

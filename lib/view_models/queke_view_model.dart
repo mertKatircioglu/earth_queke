@@ -1,5 +1,6 @@
+import 'dart:async';
+
 import 'package:earth_queke/data/queke_repository.dart';
-import 'package:earth_queke/model/data_model.dart';
 import 'package:flutter/material.dart';
 
 import '../locator.dart';
@@ -40,10 +41,8 @@ set customUserState(CustomUserState value) {
       _customUserState = CustomUserState.weatherLoadingState;
       _getirilenDataModel = await _repository.getQueksRepository();
       _customUserState = CustomUserState.weatherLoadedState;
-
     }catch (e){
       _customUserState = CustomUserState.weatherErrorState;
-
     }
     return _getirilenDataModel!;
   }
@@ -59,11 +58,15 @@ set customUserState(CustomUserState value) {
     return _getirilenDataModel2!;
   }
 
+
   Future<void> refresh()async {
+    getQuekeFromUi();
     return Future.delayed(const Duration(seconds: 1),(){
-      getQuekeFromUi();
     });
   }
+
+
+
 
   // String havaDurumuStatuGetirme(){
   //   return _getirilenDataModel!.status.toString();

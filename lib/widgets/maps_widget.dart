@@ -1,7 +1,6 @@
 import 'dart:async';
-
+import 'dart:collection';
 import 'package:earth_queke/global/globals.dart';
-import 'package:earth_queke/model/data_model.dart';
 import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -24,6 +23,10 @@ class _MapsWdigetState extends State<MapsWdiget> {
   LatLng? location;
   bool viewLocation = false;
   Set<Circle> circles ={};
+  bool _redCircles = true;
+  Color? color;
+  Set<Polygon> _polygons = HashSet<Polygon>();
+
 
   Future<void> getMarkers() async{
   final mapMarkers = await widget.eartQuekeModel!.getQuekeFromUi();
@@ -41,7 +44,7 @@ class _MapsWdigetState extends State<MapsWdiget> {
 
        circles.add(Circle(
          circleId: CircleId(element["title"].toString()),
-         fillColor: Colors.red!.withOpacity(0.3),
+         fillColor: Colors.red.withOpacity(0.3),
          strokeWidth: 0,
          center: LatLng(element["lat"] as double, element["lng"] as double),
          radius: 40000,));
@@ -50,6 +53,9 @@ class _MapsWdigetState extends State<MapsWdiget> {
   });
 
   }
+
+
+
 
   @override
   void initState() {
@@ -63,11 +69,32 @@ class _MapsWdigetState extends State<MapsWdiget> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: kBackGroundColor,
+        actions: [
+          Row(
+            children: [
+              const SizedBox(width: 1),
+              Container(
+                height: 50,
+                child:const Center(
+                  child: Text("Alanları Kaldır", style: TextStyle(fontSize: 10, color:Colors.black45),),
+                ),
+              ),
+              Switch.adaptive(
+                  value:  _redCircles,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _redCircles = newValue;
+                    });
+                    circles.clear();
+
+                  })
+            ],
+          ),
+        ],
         leading: IconButton(onPressed: (){
           Navigator.pop(context);
         },
             icon:const Icon(Icons.arrow_back, color: kPrymaryColor,)),
-        centerTitle: true,
         title:const Text(
           "Anlık Deprem Haritası",
           style: TextStyle(

@@ -8,7 +8,7 @@ class DataModel {
   var depth;
   List<double>? coordinates;
   String? title;
-  int? timestamp;
+  String? timestamp;
   String? dateStamp;
   String? date;
   String? hash;

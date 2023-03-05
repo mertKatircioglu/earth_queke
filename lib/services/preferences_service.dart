@@ -19,7 +19,6 @@ class PreferencesService{
     final mag = sharedPreferences!.getDouble('mag')?? 0.0;
     final swich = sharedPreferences!.getBool('swich') ?? false;
     final viewFilter = sharedPreferences!.getBool('viewFilter')?? false;
-
     return Settings(city, mag, swich, viewFilter);
   }
 }

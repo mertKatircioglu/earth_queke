@@ -4,5 +4,8 @@ class Settings{
   final bool swich;
   final bool viewFilter;
 
+
   Settings(this.city, this.mag, this.swich, this.viewFilter);
+
+
 }

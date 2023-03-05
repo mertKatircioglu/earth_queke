@@ -28,7 +28,6 @@ android {
     compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
-
     compileOptions {
         coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8

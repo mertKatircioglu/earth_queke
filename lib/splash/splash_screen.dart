@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:earth_queke/global/globals.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lottie/lottie.dart';
 
@@ -23,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
       if(result == true) {
           Navigator.pop(context);
       } else {
-        Fluttertoast.showToast(msg: "İnternete bağlı değilsiniz", toastLength: Toast.LENGTH_LONG);
+      //  Fluttertoast.showToast(msg: "İnternete bağlı değilsiniz", toastLength: Toast.LENGTH_LONG);
       }
     });
   }
