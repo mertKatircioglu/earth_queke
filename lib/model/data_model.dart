@@ -34,7 +34,7 @@ class DataModel {
     lat = json['lat'];
     lokasyon = json['lokasyon'];
     depth = json['depth'];
-    coordinates = json['coordinates'].cast<double>();
+    coordinates = json['coordinates'];
     title = json['title'];
     timestamp = json['timestamp'];
     dateStamp = json['date_stamp'];

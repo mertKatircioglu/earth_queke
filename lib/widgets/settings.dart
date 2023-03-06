@@ -44,7 +44,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   int _selectedMag = 0;
   bool _swihFilter = false;
   bool _viewFiltered= false;
-  final service = FlutterBackgroundService();
 
   var getSharedCity;
   var getSharedMag;
@@ -343,8 +342,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                               ),
                               onPressed: () async{
                                   sharedPreferences = await SharedPreferences.getInstance();
-                                  sharedPreferences!.clear();
-                                   service.on('stopService');
+                                  sharedPreferences!.remove('city');
+                                  sharedPreferences!.remove('swich');
+                                  sharedPreferences!.remove('viewFilter');
+                                  sharedPreferences!.remove('mag');
                                   setState(() {
                                     _viewFiltered = false;
                                     _swihFilter = false;
@@ -395,7 +396,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     //Workmanager().cancelAll();
                     if(_swihFilter == true){
                         _saveSettings(city[_selectedCity].toString(),mag[_selectedMag],true, true).whenComplete(() {
-                          service.on('setAsBackground');
                           MotionToast.success(
                             onClose: (){
                               Navigator.pop(context, true);

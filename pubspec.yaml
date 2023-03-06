@@ -50,9 +50,13 @@ dependencies:
   firebase_core:
   firebase_messaging:
   firebase_analytics: 10.0.6
+  geolocator: ^9.0.2
+  geocoding: ^2.0.5
   intl: 0.17.0
   flutter_background_service: ^2.4.6
   device_info_plus: ^8.1.0
+  turkish: '>=0.2.1'
+
 
 
 

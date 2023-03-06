@@ -25,7 +25,6 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
 
-
   Route _createRoute() {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -87,12 +86,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
 
-
-
   @override
   void initState() {
     super.initState();
     startTimer(context);
+
   }
 
   @override

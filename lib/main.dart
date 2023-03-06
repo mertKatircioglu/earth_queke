@@ -2,16 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-
-import 'package:earth_queke/model/data_model.dart';
+import 'package:earth_queke/services/current_city_local_notification.dart';
 import 'package:earth_queke/services/local_notification.dart';
-import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-import 'package:get_it/get_it.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:earth_queke/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +19,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'global/globals.dart';
 import 'locator.dart';
 import 'package:http/http.dart' as http;
+import 'package:turkish/turkish.dart';
+
 
 class MyHttpOverrides extends HttpOverrides{
   @override
@@ -41,20 +41,43 @@ String title = "1111";
 String? city="";
 double? mag;
 bool swich = false;
+Position? position;
+LocationPermission? permission;
+String? newCompleteAddress;
+List<Placemark>? placeMarks;
+String add ='';
+
 
 Future<void> main() async{
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  sharedPreferences = await SharedPreferences.getInstance();
   setupLocator();
+  await getCurrentLocation();
   final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {mapsImplementation.useAndroidViewSurface = true;}
-  sharedPreferences = await SharedPreferences.getInstance();
-
  await initializeBackgroundService();
   //FirebaseMessaging.onBackgroundMessage(_handleBackGroundMessaging);
   runApp( const MyApp());
 }
+
+getCurrentLocation() async{
+  String loc;
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      return Future.error('Konum İzinleri Reddedildi.');
+    }
+  }
+  if (permission == LocationPermission.deniedForever) {
+    return Future.error(
+        'Konum İzinleri Kalıcı Olarak Reddedildi.');
+  }
+
+}
+
 initializeBackgroundService() async {
   final service = FlutterBackgroundService();
   await service.configure(
@@ -88,23 +111,37 @@ onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
+  Position newPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.medium
+  );
+  position = newPosition;
+
+  placeMarks = await placemarkFromCoordinates(
+      position!.latitude,
+      position!.longitude
+  );
+  print('Çalıştı');
+  Placemark pMark = placeMarks![0];
+  newCompleteAddress = pMark.administrativeArea.toString().toLowerCase();
 
   Timer.periodic(const Duration(seconds: 30), (timer) async {
     if (service is AndroidServiceInstance) {
       sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences!.reload();
+      add= sharedPreferences!.getString('notifCurrentCity').toString();
+      var url = Uri.parse("https://api.orhanaydogdu.com.tr/deprem/live.php?limit=900");
+      final gelenCevap = await httpClient.get(url).catchError((onError){
+        print(onError.toString());
+      });
+      final gelenCevapJson = (jsonDecode(gelenCevap.body));
+      if(gelenCevap.statusCode == 200){
+        Iterable son = (((gelenCevapJson["result"]) as List));
+        modelList =son.toList();
+
       if(sharedPreferences!.getString('city').toString().characters.length > 2){
         title = sharedPreferences!.getString('notifCity').toString();
         city = sharedPreferences!.getString('city').toString();
         mag = sharedPreferences!.getDouble('mag');
-        var url = Uri.parse("https://api.orhanaydogdu.com.tr/deprem/live.php?limit=900");
-        final gelenCevap = await httpClient.get(url).catchError((onError){
-          print(onError.toString());
-        });
-        final gelenCevapJson = (jsonDecode(gelenCevap.body));
-        if(gelenCevap.statusCode == 200){
-          Iterable son = (((gelenCevapJson["result"]) as List));
-          modelList =son.toList();
           var newData =  modelList.where((i) => i['title'].contains('${city!.toUpperCase()}'))
               .where((i) => i['mag'] >= mag ?? 1.0).toList().first;
           if(title.characters.toString() != newData['title'].toString()){
@@ -113,10 +150,16 @@ onStart(ServiceInstance service) async {
           }else{
             print('no new data');
           }
-
         }else{
           throw Exception("Veri getirelemedi");
         }
+      }
+      var currentCity =  modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().first;
+      if(add.characters.toString() != currentCity['title'].toString()){
+        sharedPreferences!.setString('notifCurrentCity', currentCity['title']);
+        showNotificationMessageCurrentCity('Merkez Üssü: ${currentCity['title'].toString().toLowerCase()},\nŞiddeti: ${currentCity['mag']}, Saat: ${DateFormat('hh:mm a').format(DateTime.parse(currentCity['date'].replaceAll(".", "-")))}','DİKKAT! Bulunduğun bölgede deprem var');
+      }else{
+        print('no city new data');
       }
     }
   });
