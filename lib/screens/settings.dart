@@ -152,9 +152,9 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.email_outlined, size: 12,),
+                          const Icon(Icons.email_outlined, size: 12,),
                           const SizedBox(width: 2,),
-                          Text('${authUser.currentUser!.email}', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12),),
+                          Text('${authUser.currentUser!.email}', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 12),),
                         ],
                       ),
                     ],
