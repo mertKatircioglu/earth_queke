@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class EartQukeApiClient{
@@ -14,7 +15,7 @@ final http.Client httpClient = http.Client();
     final gelenCevapJson = (jsonDecode(gelenCevap.body));
     if(gelenCevap.statusCode == 200){
       List son = (gelenCevapJson["result"]) as List;
-    //  debugPrint("SORGUDAN GELEN CEVAP**********: ${gelenCevapJson.toString()}", wrapWidth: 1024);
+     // debugPrint("SORGUDAN GELEN CEVAP**********: ${gelenCevapJson.toString()}", wrapWidth: 1024);
       return son;
     }else{
       throw Exception("Veri getirelemedi");

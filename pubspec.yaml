@@ -55,7 +55,8 @@ dependencies:
   intl: 0.17.0
   flutter_background_service: ^2.4.6
   device_info_plus: ^8.1.0
-  turkish: '>=0.2.1'
+  fl_chart: ^0.61.0
+
 
 
 

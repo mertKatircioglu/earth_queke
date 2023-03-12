@@ -31,23 +31,23 @@ class _MapsWdigetState extends State<MapsWdiget> {
   Future<void> getMarkers() async{
   final mapMarkers = await widget.eartQuekeModel!.getQuekeFromUi();
    mapMarkers.forEach((element) {
-     setState(() {
-       markers.add(Marker(
-         markerId: MarkerId(element["title"].toString()),
-         position: LatLng(element["lat"] as double, element["lng"] as double), //position of marker
-         infoWindow: InfoWindow( //popup info
-           title: element["title"].toString(),
-           snippet:"Şiddet: ${element["mag"]}",
-         ),
-         icon: BitmapDescriptor.defaultMarker, //Icon for Marker
-       ));
+     markers.add(Marker(
+       markerId: MarkerId(element["title"].toString()),
+       position: LatLng(element["geojson"]['coordinates'][1] as double,element["geojson"]['coordinates'][0] as double), //position of marker
+       infoWindow: InfoWindow( //popup info
+         title: element["title"].toString(),
+         snippet:"Şiddet: ${element["mag"]}",
+       ),
+       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+     ));
 
-       circles.add(Circle(
-         circleId: CircleId(element["title"].toString()),
-         fillColor: Colors.red.withOpacity(0.3),
-         strokeWidth: 0,
-         center: LatLng(element["lat"] as double, element["lng"] as double),
-         radius: 40000,));
+     circles.add(Circle(
+       circleId: CircleId(element["title"].toString()),
+       fillColor: Colors.red.withOpacity(0.3),
+       strokeWidth: 0,
+       center: LatLng(element["geojson"]['coordinates'][1] as double,element["geojson"]['coordinates'][0] as double),
+       radius: 40000,));
+     setState(() {
      });
 
   });

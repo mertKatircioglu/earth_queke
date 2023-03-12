@@ -28,13 +28,14 @@ class _ItemDetailWidgetState extends State<ItemDetailWidget> {
   @override
   void initState() {
     location = LatLng(
-        (widget.earthQuakeViewModel!.lat as double),
-        (widget.earthQuakeViewModel!.lng as double));
+        widget.earthQuakeViewModel!.geojson!.coordinates![1],
+      widget.earthQuakeViewModel!.geojson!.coordinates![0]
+    );
     circles.add(Circle(
       circleId: CircleId(widget.earthQuakeViewModel!.title.toString()),
-      fillColor: Colors.red!.withOpacity(0.3),
+      fillColor: Colors.red.withOpacity(0.3),
         strokeWidth: 0,
-      center: LatLng(widget.earthQuakeViewModel!.lat as double, widget.earthQuakeViewModel!.lng as double),
+      center: LatLng(widget.earthQuakeViewModel!.geojson!.coordinates![1], widget.earthQuakeViewModel!.geojson!.coordinates![0]),
       radius: 15000,));
 
     markers.add(Marker(

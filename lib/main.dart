@@ -19,7 +19,6 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'global/globals.dart';
 import 'locator.dart';
 import 'package:http/http.dart' as http;
-import 'package:turkish/turkish.dart';
 
 
 class MyHttpOverrides extends HttpOverrides{
@@ -37,7 +36,7 @@ Future<void> _handleBackGroundMessaging(RemoteMessage message) async {
 
 final http.Client httpClient = http.Client();
 List modelList = [];
-String title = "1111";
+String filterId = '11';
 String? city="";
 double? mag;
 bool swich = false;
@@ -45,7 +44,10 @@ Position? position;
 LocationPermission? permission;
 String? newCompleteAddress;
 List<Placemark>? placeMarks;
-String add ='';
+String currentCityId ='11';
+var newData;
+var currentCity;
+var url = Uri.parse("https://api.orhanaydogdu.com.tr/deprem/live.php?limit=900");
 
 
 Future<void> main() async{
@@ -63,7 +65,6 @@ Future<void> main() async{
 }
 
 getCurrentLocation() async{
-  String loc;
   permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
@@ -115,54 +116,60 @@ onStart(ServiceInstance service) async {
       desiredAccuracy: LocationAccuracy.medium
   );
   position = newPosition;
-
   placeMarks = await placemarkFromCoordinates(
       position!.latitude,
       position!.longitude
   );
-  print('Çalıştı');
   Placemark pMark = placeMarks![0];
   newCompleteAddress = pMark.administrativeArea.toString().toLowerCase();
 
-  Timer.periodic(const Duration(seconds: 30), (timer) async {
-    if (service is AndroidServiceInstance) {
-      sharedPreferences = await SharedPreferences.getInstance();
-      sharedPreferences!.reload();
-      add= sharedPreferences!.getString('notifCurrentCity').toString();
-      var url = Uri.parse("https://api.orhanaydogdu.com.tr/deprem/live.php?limit=900");
-      final gelenCevap = await httpClient.get(url).catchError((onError){
-        print(onError.toString());
-      });
-      final gelenCevapJson = (jsonDecode(gelenCevap.body));
-      if(gelenCevap.statusCode == 200){
-        Iterable son = (((gelenCevapJson["result"]) as List));
-        modelList =son.toList();
 
-      if(sharedPreferences!.getString('city').toString().characters.length > 2){
-        title = sharedPreferences!.getString('notifCity').toString();
-        city = sharedPreferences!.getString('city').toString();
-        mag = sharedPreferences!.getDouble('mag');
-          var newData =  modelList.where((i) => i['title'].contains('${city!.toUpperCase()}'))
-              .where((i) => i['mag'] >= mag ?? 1.0).toList().first;
-          if(title.characters.toString() != newData['title'].toString()){
-            sharedPreferences!.setString('notifCity', newData['title']);
-            showNotificationMessage('Şiddeti: ${newData['mag']}\nSaat: ${DateFormat('hh:mm a').format(DateTime.parse(newData['date'].replaceAll(".", "-")))}','Merkez Üssü: ${newData['title'].toString().toLowerCase()}');
-          }else{
-            print('no new data');
-          }
-        }else{
-          throw Exception("Veri getirelemedi");
-        }
+  Timer.periodic(const Duration(seconds: 30), (timer) async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences!.reload();
+    currentCityId = sharedPreferences!.getString('earthquake_id_city').toString();
+    filterId = sharedPreferences!.getString('earthquake_id_filter').toString();
+    city = sharedPreferences!.getString('city').toString();
+    mag = sharedPreferences!.getDouble('mag');
+
+    final gelenCevap = await httpClient.get(url).catchError((onError){
+      print(onError.toString());
+    });
+    final gelenCevapJson = (jsonDecode(gelenCevap.body));
+    if(gelenCevap.statusCode == 200) {
+      Iterable son = (((gelenCevapJson["result"]) as List));
+      modelList = son.toList();
+    }else{
+      throw Exception("Veri getirelemedi");
+    }
+
+
+    print("${city}, ${mag}");
+
+    if(sharedPreferences!.getString('city').toString() != 'null'){
+       newData =  modelList.where((i) => i['title'].contains('${city!.toUpperCase()}'))
+          .where((i) => i['mag'] >= mag ?? 1.0).toList().first;
+      if(filterId.characters.toString() != newData['earthquake_id'].toString()){
+        sharedPreferences!.setString('earthquake_id_filter', newData['earthquake_id']);
+        showNotificationMessage('Şiddeti: ${newData['mag'].toString()}\nSaat: ${DateFormat('hh:mm a').format(DateTime.parse(newData['date'].replaceAll(".", "-"))).toString()}','Merkez Üssü: ${newData['title'].toString().toLowerCase()}');
+      }else{
+        print('no new data');
       }
-      var currentCity =  modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().first;
-      if(add.characters.toString() != currentCity['title'].toString()){
-        sharedPreferences!.setString('notifCurrentCity', currentCity['title']);
+    }
+
+    if(modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().length >0){
+      currentCity =  modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().first;
+      print(currentCity);
+      if(currentCityId.characters.toString() != currentCity['earthquake_id'].toString()){
+        sharedPreferences!.setString('earthquake_id_city', currentCity['earthquake_id']);
         showNotificationMessageCurrentCity('Merkez Üssü: ${currentCity['title'].toString().toLowerCase()},\nŞiddeti: ${currentCity['mag']}, Saat: ${DateFormat('hh:mm a').format(DateTime.parse(currentCity['date'].replaceAll(".", "-")))}','DİKKAT! Bulunduğun bölgede deprem var');
       }else{
         print('no city new data');
       }
     }
   });
+
+
 
 }
 
