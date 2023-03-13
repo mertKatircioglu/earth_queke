@@ -1,380 +1,317 @@
+import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../global/globals.dart';
+class LineChartSample5 extends StatefulWidget {
+  EarthQuakeViewModel? dataModel;
+  String? city;
+   LineChartSample5({
+    super.key,
+    Color? gradientColor1,
+    this.dataModel,
+     this.city,
+    Color? gradientColor2,
+    Color? gradientColor3,
+    Color? indicatorStrokeColor,
+  }) : gradientColor1 = gradientColor1 ?? Colors.blue,
+        gradientColor2 = gradientColor2 ?? Colors.pink,
+        gradientColor3 = gradientColor3 ?? Colors.red,
+        indicatorStrokeColor = indicatorStrokeColor ?? Colors.white;
 
-class QuekeChart extends StatelessWidget {
-  const QuekeChart({required this.isShowingMainData});
-
-  final bool isShowingMainData;
+  final Color gradientColor1;
+  final Color gradientColor2;
+  final Color gradientColor3;
+  final Color indicatorStrokeColor;
 
   @override
-  Widget build(BuildContext context) {
-    return LineChart(
-      isShowingMainData ? sampleData1 : sampleData2,
-      swapAnimationDuration: const Duration(milliseconds: 250),
-    );
-  }
+  State<LineChartSample5> createState() => _LineChartSample5State();
+}
 
-  LineChartData get sampleData1 => LineChartData(
-    lineTouchData: lineTouchData1,
-    gridData: gridData,
-    titlesData: titlesData1,
-    borderData: borderData,
-    lineBarsData: lineBarsData1,
-    minX: 0,
-    maxX: 14,
-    maxY: 4,
-    minY: 0,
-  );
+class _LineChartSample5State extends State<LineChartSample5> {
+  List<int> get showIndexes => const [1,2,3,4,5,6];
+  int? m1=0;
+  int? m2=0;
+  int? m3=0;
+  int? m4=0;
+  int? m5=0;
+  int? m6=0;
+  int? m7=0;
 
-  LineChartData get sampleData2 => LineChartData(
-    lineTouchData: lineTouchData2,
-    gridData: gridData,
-    titlesData: titlesData2,
-    borderData: borderData,
-    lineBarsData: lineBarsData2,
-    minX: 0,
-    maxX: 14,
-    maxY: 6,
-    minY: 0,
-  );
+  List<FlSpot> get allSpots =>  [
+    FlSpot(0,0),
+    FlSpot(1, m1!.toDouble()),
+    FlSpot(2, m2!.toDouble()),
+    FlSpot(3, m3!.toDouble()),
+    FlSpot(4, m4!.toDouble()),
+    FlSpot(5, m5!.toDouble()),
+    FlSpot(6, m6!.toDouble()),
+    FlSpot(7, m7!.toDouble()),
 
-  LineTouchData get lineTouchData1 => LineTouchData(
-    handleBuiltInTouches: true,
-    touchTooltipData: LineTouchTooltipData(
-      tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-    ),
-  );
-
-  FlTitlesData get titlesData1 => FlTitlesData(
-    bottomTitles: AxisTitles(
-      sideTitles: bottomTitles,
-    ),
-    rightTitles: AxisTitles(
-      sideTitles: SideTitles(showTitles: false),
-    ),
-    topTitles: AxisTitles(
-      sideTitles: SideTitles(showTitles: false),
-    ),
-    leftTitles: AxisTitles(
-      sideTitles: leftTitles(),
-    ),
-  );
-
-  List<LineChartBarData> get lineBarsData1 => [
-    lineChartBarData1_1,
-    lineChartBarData1_2,
-    lineChartBarData1_3,
   ];
 
-  LineTouchData get lineTouchData2 => LineTouchData(
-    enabled: false,
-  );
-
-  FlTitlesData get titlesData2 => FlTitlesData(
-    bottomTitles: AxisTitles(
-      sideTitles: bottomTitles,
-    ),
-    rightTitles: AxisTitles(
-      sideTitles: SideTitles(showTitles: false),
-    ),
-    topTitles: AxisTitles(
-      sideTitles: SideTitles(showTitles: false),
-    ),
-    leftTitles: AxisTitles(
-      sideTitles: leftTitles(),
-    ),
-  );
-
-  List<LineChartBarData> get lineBarsData2 => [
-    lineChartBarData2_1,
-    lineChartBarData2_2,
-    lineChartBarData2_3,
-  ];
-
-  Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
+  Widget bottomTitleWidgets(double value, TitleMeta meta, double chartWidth) {
+    final style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 14,
+      color: Colors.pink,
+      fontFamily: 'Digital',
+      fontSize: 14 * chartWidth / 500,
     );
     String text;
     switch (value.toInt()) {
+      case 0:
+        text = '';
+        break;
       case 1:
-        text = '1m';
+        text = '1';
         break;
       case 2:
-        text = '2m';
+        text = '2';
         break;
       case 3:
-        text = '3m';
+        text = '3';
         break;
       case 4:
-        text = '5m';
+        text = '4';
         break;
       case 5:
-        text = '6m';
+        text = '5';
+        break;
+      case 6:
+        text = '6';
+        break;
+      case 7:
+        text = '7';
         break;
       default:
         return Container();
     }
-
-    return Text(text, style: style, textAlign: TextAlign.center);
-  }
-
-  SideTitles leftTitles() => SideTitles(
-    getTitlesWidget: leftTitleWidgets,
-    showTitles: true,
-    interval: 1,
-    reservedSize: 40,
-  );
-
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('SEPT', style: style);
-        break;
-      case 7:
-        text = const Text('OCT', style: style);
-        break;
-      case 12:
-        text = const Text('DEC', style: style);
-        break;
-      default:
-        text = const Text('');
-        break;
-    }
-
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      space: 10,
-      child: text,
+      child: Text(text, style: style),
     );
   }
 
-  SideTitles get bottomTitles => SideTitles(
-    showTitles: true,
-    reservedSize: 32,
-    interval: 1,
-    getTitlesWidget: bottomTitleWidgets,
-  );
 
-  FlGridData get gridData => FlGridData(show: false);
+  loadData() async{
+    var d1 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-6,DateTime.now().day));
+    var d2 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-5,DateTime.now().day));
+    var d3 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-4,DateTime.now().day));
+    var d4 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-3,DateTime.now().day));
+    var d5 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-2,DateTime.now().day));
+    var d6 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-1,DateTime.now().day));
+    var d7 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day));
+    //print(await double.parse((dataModel!.getAnnualDataFromUi(city!) as List).where((i) => i['date'].contains('01')).length.toString()));
+   await widget.dataModel!.getAnnualDataFromUi(widget.city!).then((value) {
+     print(d1);
 
-  FlBorderData get borderData => FlBorderData(
-    show: true,
-    border: Border(
-      bottom:
-      BorderSide(color: kPrymaryColor.withOpacity(0.2), width: 4),
-      left: const BorderSide(color: Colors.transparent),
-      right: const BorderSide(color: Colors.transparent),
-      top: const BorderSide(color: Colors.transparent),
-    ),
-  );
+     setState(() {
+       m1 = value.where((i) => i['date'].contains('${d1}')).length;
+       m2 = value.where((i) => i['date'].contains('${d2}')).length;
+       m3 = value.where((i) => i['date'].contains('${d3}')).length;
+       m4 = value.where((i) => i['date'].contains('${d4}')).length;
+       m5 = value.where((i) => i['date'].contains('${d5}')).length;
+       m6 = value.where((i) => i['date'].contains('${d6}')).length;
+       m7 = value.where((i) => i['date'].contains('${d7}')).length;
+     });
 
-  LineChartBarData get lineChartBarData1_1 => LineChartBarData(
-    isCurved: true,
-    color: Colors.green,
-    barWidth: 8,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: false),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 1),
-      FlSpot(3, 1.5),
-      FlSpot(5, 1.4),
-      FlSpot(7, 3.4),
-      FlSpot(10, 2),
-      FlSpot(12, 2.2),
-      FlSpot(13, 1.8),
-    ],
-  );
+     print(m5);
 
-  LineChartBarData get lineChartBarData1_2 => LineChartBarData(
-    isCurved: true,
-    color: Colors.pink,
-    barWidth: 8,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: false),
-    belowBarData: BarAreaData(
-      show: false,
-      color: Colors.pink.withOpacity(0),
-    ),
-    spots: const [
-      FlSpot(1, 1),
-      FlSpot(3, 2.8),
-      FlSpot(7, 1.2),
-      FlSpot(10, 2.8),
-      FlSpot(12, 2.6),
-      FlSpot(13, 3.9),
-    ],
-  );
-
-  LineChartBarData get lineChartBarData1_3 => LineChartBarData(
-    isCurved: true,
-    color: Colors.cyan,
-    barWidth: 8,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: false),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 2.8),
-      FlSpot(3, 1.9),
-      FlSpot(6, 3),
-      FlSpot(10, 1.3),
-      FlSpot(13, 2.5),
-    ],
-  );
-
-  LineChartBarData get lineChartBarData2_1 => LineChartBarData(
-    isCurved: true,
-    curveSmoothness: 0,
-    color: Colors.green.withOpacity(0.5),
-    barWidth: 4,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: false),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 1),
-      FlSpot(3, 4),
-      FlSpot(5, 1.8),
-      FlSpot(7, 5),
-      FlSpot(10, 2),
-      FlSpot(12, 2.2),
-      FlSpot(13, 1.8),
-    ],
-  );
-
-  LineChartBarData get lineChartBarData2_2 => LineChartBarData(
-    isCurved: true,
-    color: Colors.pink.withOpacity(0.5),
-    barWidth: 4,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: false),
-    belowBarData: BarAreaData(
-      show: true,
-      color: Colors.pink.withOpacity(0.2),
-    ),
-    spots: const [
-      FlSpot(1, 1),
-      FlSpot(3, 2.8),
-      FlSpot(7, 1.2),
-      FlSpot(10, 2.8),
-      FlSpot(12, 2.6),
-      FlSpot(13, 3.9),
-    ],
-  );
-
-  LineChartBarData get lineChartBarData2_3 => LineChartBarData(
-    isCurved: true,
-    curveSmoothness: 0,
-    color: Colors.cyan.withOpacity(0.5),
-    barWidth: 2,
-    isStrokeCapRound: true,
-    dotData: FlDotData(show: true),
-    belowBarData: BarAreaData(show: false),
-    spots: const [
-      FlSpot(1, 3.8),
-      FlSpot(3, 1.9),
-      FlSpot(6, 5),
-      FlSpot(10, 3.3),
-      FlSpot(13, 4.5),
-    ],
-  );
-}
-
-class LineChartSample1 extends StatefulWidget {
-  const LineChartSample1({super.key});
-
-  @override
-  State<StatefulWidget> createState() => LineChartSample1State();
-}
-
-class LineChartSample1State extends State<LineChartSample1> {
-  late bool isShowingMainData;
-
+    });
+  }
   @override
   void initState() {
-    super.initState();
-    isShowingMainData = true;
+        super.initState();
+        loadData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon:const Icon(Icons.arrow_back, color: kPrymaryColor),
-          onPressed: () {
-            Navigator.pop(context, false);
-          },
+
+    final lineBarsData = [
+      LineChartBarData(
+        showingIndicators: showIndexes,
+        spots: allSpots,
+        isCurved: true,
+        barWidth: 1.5,
+        shadow: const Shadow(
+          blurRadius: 8,
         ),
-        backgroundColor: kBackGroundColor,
-        elevation: 0,
-        centerTitle: true,
-        title:const Text(
-          "Yıllık Dökümler",
-          style: TextStyle(
-              color: kPrymaryColor,
-              fontSize: 18
-          ),
-        ),
-      ),
-      body: Container(
-        child: AspectRatio(
-          aspectRatio: 1.23,
-          child: Stack(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  const SizedBox(
-                    height: 37,
-                  ),
-                  const Text(
-                    'Monthly Sales',
-                    style: TextStyle(
-                      color: kPrymaryColor,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 2,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(
-                    height: 37,
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 16, left: 6),
-                      child: QuekeChart(isShowingMainData: isShowingMainData),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.refresh,
-                  color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
-                ),
-                onPressed: () {
-                  setState(() {
-                    isShowingMainData = !isShowingMainData;
-                  });
-                },
-              )
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            colors: [
+              widget.gradientColor1.withOpacity(0.4),
+              widget.gradientColor2.withOpacity(0.4),
+              widget.gradientColor3.withOpacity(0.4),
             ],
           ),
         ),
+        dotData: FlDotData(show: false),
+        gradient: LinearGradient(
+          colors: [
+            widget.gradientColor1,
+            widget.gradientColor2,
+            widget.gradientColor3,
+          ],
+          stops: const [0.1, 0.4, 0.9],
+        ),
+      ),
+    ];
+
+    final tooltipsOnBar = lineBarsData[0];
+
+    return AspectRatio(
+      aspectRatio: 1.5,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 1.0,
+          vertical: 5,
+        ),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return LineChart(
+            LineChartData(
+              showingTooltipIndicators: showIndexes.map((index) {
+                return ShowingTooltipIndicators([
+                  LineBarSpot(
+                    tooltipsOnBar,
+                    lineBarsData.indexOf(tooltipsOnBar),
+                    tooltipsOnBar.spots[index],
+                  ),
+                ]);
+              }).toList(),
+              lineTouchData: LineTouchData(
+                enabled: false,
+                getTouchedSpotIndicator:
+                    (LineChartBarData barData, List<int> spotIndexes) {
+                  return spotIndexes.map((index) {
+                    return TouchedSpotIndicatorData(
+                      FlLine(
+                        color: Colors.pink,
+                      ),
+                      FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) =>
+                            FlDotCirclePainter(
+                              radius: 3,
+                              color: lerpGradient(
+                                barData.gradient!.colors,
+                                barData.gradient!.stops!,
+                                percent / 100,
+                              ),
+                              strokeWidth: 2,
+                              strokeColor: widget.indicatorStrokeColor,
+                            ),
+                      ),
+                    );
+                  }).toList();
+                },
+                touchTooltipData: LineTouchTooltipData(
+                  tooltipPadding: const EdgeInsets.all(2.0),
+                  tooltipBgColor: Colors.pink,
+                  tooltipRoundedRadius: 4,
+                  getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
+                    return lineBarsSpot.map((lineBarSpot) {
+                      return LineTooltipItem(
+                        lineBarSpot.y.toString().replaceAll('.0', ''),
+                        const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
+              lineBarsData: lineBarsData,
+              minY: 0,
+              titlesData: FlTitlesData(
+                leftTitles: AxisTitles(
+                  axisNameWidget: const Text(''),
+                  axisNameSize: 24,
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    reservedSize: 0,
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      return bottomTitleWidgets(
+                        value,
+                        meta,
+                        constraints.maxWidth,
+                      );
+                    },
+                    reservedSize: 30,
+                  ),
+                ),
+                rightTitles: AxisTitles(
+                  axisNameWidget: const Text(''),
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    reservedSize: 0,
+                  ),
+                ),
+                topTitles: AxisTitles(
+                  axisNameWidget: const Text(
+                    '',
+                    textAlign: TextAlign.left,
+                  ),
+                  axisNameSize: 24,
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 0,
+                  ),
+                ),
+              ),
+              gridData: FlGridData(show: false),
+              borderData: FlBorderData(
+                show: true,
+                border: Border.all(
+                  color: Colors.white54,
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
+}
+
+/// Lerps between a [LinearGradient] colors, based on [t]
+Color lerpGradient(List<Color> colors, List<double> stops, double t) {
+  if (colors.isEmpty) {
+    throw ArgumentError('"colors" is empty.');
+  } else if (colors.length == 1) {
+    return colors[0];
+  }
+
+  if (stops.length != colors.length) {
+    stops = [];
+
+    /// provided gradientColorStops is invalid and we calculate it here
+    colors.asMap().forEach((index, color) {
+      final percent = 1.0 / (colors.length - 1);
+      stops.add(percent * index);
+    });
+  }
+
+  for (var s = 0; s < stops.length - 1; s++) {
+    final leftStop = stops[s];
+    final rightStop = stops[s + 1];
+    final leftColor = colors[s];
+    final rightColor = colors[s + 1];
+    if (t <= leftStop) {
+      return leftColor;
+    } else if (t < rightStop) {
+      final sectionT = (t - leftStop) / (rightStop - leftStop);
+      return Color.lerp(leftColor, rightColor, sectionT)!;
+    }
+  }
+  return colors.last;
 }

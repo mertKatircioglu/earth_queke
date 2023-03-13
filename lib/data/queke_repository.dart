@@ -14,5 +14,9 @@ class QuekeRepository{
     return await erattQuekeApiClient.getQuekeFiltered(selectedCity, mag);
   }
 
+  Future<List> getAnnualDatas(String selectedCity) async{
+    return await erattQuekeApiClient.getAnnualStatistics(selectedCity);
+  }
+
 
 }

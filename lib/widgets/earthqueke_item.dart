@@ -58,7 +58,7 @@ class EarthQuekeItem extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 2,),
-                    Text(  DateFormat('dd-MM-yyyy hh:mm a').format(DateTime.parse(earthQuakeViewModel!.date!.replaceAll(".", "-"))),
+                    Text(DateFormat('dd-MM-yyyy hh:mm a').format(DateTime.parse(earthQuakeViewModel!.date!.replaceAll(".", "-"))),
                       style:const TextStyle(
                         fontSize: 12,
                       ),

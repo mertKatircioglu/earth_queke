@@ -17,16 +17,19 @@ CustomUserState? _customUserState;
   QuekeRepository _repository= locator<QuekeRepository>();
   List? _getirilenDataModel;
   List? _getirilenDataModel2;
+  List? _annualDatas;
 
   EarthQuakeViewModel(){
     _getirilenDataModel = [];
     _getirilenDataModel2 = [];
+    _annualDatas = [];
     _customUserState = CustomUserState.initialEartherState;
   }
 
 
   List get getirilenDataModel => _getirilenDataModel!;
   List get getirilenDataModel2 => _getirilenDataModel2!;
+  List get annualDatas => _annualDatas!;
 
 CustomUserState get customUserState => _customUserState!;
 
@@ -57,6 +60,17 @@ set customUserState(CustomUserState value) {
     }
     return _getirilenDataModel2!;
   }
+
+Future<List> getAnnualDataFromUi(String selectedCity) async {
+  try{
+    _customUserState = CustomUserState.weatherLoadingState;
+    _annualDatas = await _repository.getAnnualDatas(selectedCity);
+    _customUserState = CustomUserState.weatherLoadedState;
+  }catch (e){
+    _customUserState = CustomUserState.weatherErrorState;
+  }
+  return _annualDatas!;
+}
 
 
   Future<void> refresh()async {

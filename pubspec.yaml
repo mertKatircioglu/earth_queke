@@ -58,6 +58,7 @@ dependencies:
   fl_chart: ^0.61.0
   maps_launcher: ^2.2.0
   flutter_polyline_points: ^1.0.0
+  turkish: ^0.2.1
 
 
 

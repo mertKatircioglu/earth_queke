@@ -122,6 +122,8 @@ onStart(ServiceInstance service) async {
   );
   Placemark pMark = placeMarks![0];
   newCompleteAddress = pMark.administrativeArea.toString().toLowerCase();
+  sharedPreferences = await SharedPreferences.getInstance();
+  sharedPreferences!.setString('currentCity', newCompleteAddress!.toUpperCase());
 
 
   Timer.periodic(const Duration(seconds: 30), (timer) async {
@@ -144,7 +146,7 @@ onStart(ServiceInstance service) async {
     }
 
 
-    print("${city}, ${mag}");
+    //print("${city}, ${mag}");
 
     if(sharedPreferences!.getString('city').toString() != 'null'){
        newData =  modelList.where((i) => i['title'].contains('${city!.toUpperCase()}'))
@@ -159,7 +161,7 @@ onStart(ServiceInstance service) async {
 
     if(modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().length >0){
       currentCity =  modelList.where((i) => i['title'].contains('${newCompleteAddress!.toUpperCase()}')).toList().first;
-      print(currentCity);
+     // print(currentCity);
       if(currentCityId.characters.toString() != currentCity['earthquake_id'].toString()){
         sharedPreferences!.setString('earthquake_id_city', currentCity['earthquake_id']);
         showNotificationMessageCurrentCity('Merkez Üssü: ${currentCity['title'].toString().toLowerCase()},\nŞiddeti: ${currentCity['mag']}, Saat: ${DateFormat('hh:mm a').format(DateTime.parse(currentCity['date'].replaceAll(".", "-")))}','DİKKAT! Bulunduğun bölgede deprem var');

@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController filterController = TextEditingController();
 
 
+
   Future <void> listenSharedFilter()async{
     if(sharedPreferences!.getBool("swich") == true){
       sharedPreferences!.reload();
@@ -176,7 +177,7 @@ storeNotificationToken() async{
           children: [
             InkWell(
               onTap: (){
-             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const QuekeChart(isShowingMainData: true,)));
+          //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const LineChartSample5()));
                // showNotificationMessage("element['title']", 'Deprem:');
 
                 //sendNotifcation(token!);

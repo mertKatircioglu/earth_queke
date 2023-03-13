@@ -16,9 +16,10 @@ class PreferencesService{
   Future<Settings> getSettings() async{
     sharedPreferences = await SharedPreferences.getInstance();
     final city = sharedPreferences!.getString('city') ?? '';
+    final currentCity = sharedPreferences!.getString('currentCity') ?? '';
     final mag = sharedPreferences!.getDouble('mag')?? 0.0;
     final swich = sharedPreferences!.getBool('swich') ?? false;
     final viewFilter = sharedPreferences!.getBool('viewFilter')?? false;
-    return Settings(city, mag, swich, viewFilter);
+    return Settings(city: city,mag: mag,swich: swich,viewFilter: viewFilter,currentCity: currentCity);
   }
 }
