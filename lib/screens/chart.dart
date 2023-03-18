@@ -1,16 +1,18 @@
+import 'package:earth_queke/global/globals.dart';
 import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../services/preferences_service.dart';
 
 class LineChartSample5 extends StatefulWidget {
   EarthQuakeViewModel? dataModel;
-  String? city;
    LineChartSample5({
     super.key,
     Color? gradientColor1,
     this.dataModel,
-     this.city,
     Color? gradientColor2,
     Color? gradientColor3,
     Color? indicatorStrokeColor,
@@ -29,7 +31,8 @@ class LineChartSample5 extends StatefulWidget {
 }
 
 class _LineChartSample5State extends State<LineChartSample5> {
-  List<int> get showIndexes => const [1,2,3,4,5,6];
+  List<int> get showIndexes => const [0,1,2,3,4,5];
+
   int? m1=0;
   int? m2=0;
   int? m3=0;
@@ -37,17 +40,30 @@ class _LineChartSample5State extends State<LineChartSample5> {
   int? m5=0;
   int? m6=0;
   int? m7=0;
+  List<String> months = [
+    '',
+    'OCAK',
+    'ŞUBAT',
+    'MART',
+    'NİSAN',
+    'MAYIS',
+    'HAZİRAN',
+    'TEMMUZ',
+    'AĞUSTOS',
+    'EYLÜL',
+    'EKİM',
+    'KASIM',
+    'ARALIK'
+  ];
+  String currentCity ='';
 
   List<FlSpot> get allSpots =>  [
-    FlSpot(0,0),
-    FlSpot(1, m1!.toDouble()),
-    FlSpot(2, m2!.toDouble()),
-    FlSpot(3, m3!.toDouble()),
-    FlSpot(4, m4!.toDouble()),
-    FlSpot(5, m5!.toDouble()),
-    FlSpot(6, m6!.toDouble()),
-    FlSpot(7, m7!.toDouble()),
-
+    FlSpot(0, m1!.toDouble()),
+    FlSpot(1, m2!.toDouble()),
+    FlSpot(2, m3!.toDouble()),
+    FlSpot(3, m4!.toDouble()),
+    FlSpot(4, m5!.toDouble()),
+    FlSpot(5, m6!.toDouble()),
   ];
 
   Widget bottomTitleWidgets(double value, TitleMeta meta, double chartWidth) {
@@ -58,31 +74,28 @@ class _LineChartSample5State extends State<LineChartSample5> {
       fontSize: 14 * chartWidth / 500,
     );
     String text;
+
     switch (value.toInt()) {
+
       case 0:
-        text = '';
+        text = months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,(DateTime.now().month-5),)))).toString();
         break;
       case 1:
-        text = '1';
+        text = months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,DateTime.now().month-4,)))).toString();
         break;
       case 2:
-        text = '2';
+        text =months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,DateTime.now().month-3,)))).toString();
         break;
       case 3:
-        text = '3';
+        text = months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,DateTime.now().month-2,)))).toString();
         break;
       case 4:
-        text = '4';
+        text = months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,DateTime.now().month-1,)))).toString();
         break;
       case 5:
-        text = '5';
+        text = months.elementAt(int.parse(DateFormat('MM').format(DateTime(DateTime.now().year,DateTime.now().month)))).toString();
         break;
-      case 6:
-        text = '6';
-        break;
-      case 7:
-        text = '7';
-        break;
+
       default:
         return Container();
     }
@@ -94,31 +107,35 @@ class _LineChartSample5State extends State<LineChartSample5> {
 
 
   loadData() async{
-    var d1 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-6,DateTime.now().day));
-    var d2 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-5,DateTime.now().day));
-    var d3 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-4,DateTime.now().day));
-    var d4 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-3,DateTime.now().day));
-    var d5 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-2,DateTime.now().day));
-    var d6 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-1,DateTime.now().day));
-    var d7 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day));
-    //print(await double.parse((dataModel!.getAnnualDataFromUi(city!) as List).where((i) => i['date'].contains('01')).length.toString()));
-   await widget.dataModel!.getAnnualDataFromUi(widget.city!).then((value) {
-     print(d1);
-
+    sharedPreferences = await SharedPreferences.getInstance();
+    var city = sharedPreferences!.getString('currentCity');
+    var d1 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-6));
+    var d2 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-5));
+    var d3 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-4));
+    var d4 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-3));
+    var d5 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-2));
+    var d6 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month-1));
+    var d7 = DateFormat('yyy.MM').format(DateTime(DateTime.now().year,DateTime.now().month));
+   // print(d1);
+    print(d2);
+   await widget.dataModel!.getAnnualDataFromUi('HATAY').then((value) {
      setState(() {
-       m1 = value.where((i) => i['date'].contains('${d1}')).length;
-       m2 = value.where((i) => i['date'].contains('${d2}')).length;
-       m3 = value.where((i) => i['date'].contains('${d3}')).length;
-       m4 = value.where((i) => i['date'].contains('${d4}')).length;
-       m5 = value.where((i) => i['date'].contains('${d5}')).length;
-       m6 = value.where((i) => i['date'].contains('${d6}')).length;
-       m7 = value.where((i) => i['date'].contains('${d7}')).length;
+       m1 = value.where((i) => i['date'].contains('$d1')).length;
+       m2 = value.where((i) => i['date'].contains('$d2')).length;
+       m3 = value.where((i) => i['date'].contains('$d3')).length;
+       m4 = value.where((i) => i['date'].contains('$d4')).length;
+       m5 = value.where((i) => i['date'].contains('$d5')).length;
+       m6 = value.where((i) => i['date'].contains('$d6')).length;
+       m7 = value.where((i) => i['date'].contains('$d7')).length;
+
      });
 
-     print(m5);
 
     });
   }
+
+
+
   @override
   void initState() {
         super.initState();
@@ -183,6 +200,7 @@ class _LineChartSample5State extends State<LineChartSample5> {
               lineTouchData: LineTouchData(
                 enabled: false,
                 getTouchedSpotIndicator:
+
                     (LineChartBarData barData, List<int> spotIndexes) {
                   return spotIndexes.map((index) {
                     return TouchedSpotIndicatorData(
@@ -207,9 +225,10 @@ class _LineChartSample5State extends State<LineChartSample5> {
                   }).toList();
                 },
                 touchTooltipData: LineTouchTooltipData(
-                  tooltipPadding: const EdgeInsets.all(2.0),
+                  tooltipPadding: const EdgeInsets.all(4.0),
                   tooltipBgColor: Colors.pink,
                   tooltipRoundedRadius: 4,
+
                   getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                     return lineBarsSpot.map((lineBarSpot) {
                       return LineTooltipItem(

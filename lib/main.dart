@@ -10,6 +10,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:earth_queke/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -42,6 +43,7 @@ double? mag;
 bool swich = false;
 Position? position;
 LocationPermission? permission;
+PermissionStatus? result;
 String? newCompleteAddress;
 List<Placemark>? placeMarks;
 String currentCityId ='11';
@@ -57,6 +59,7 @@ Future<void> main() async{
   sharedPreferences = await SharedPreferences.getInstance();
   setupLocator();
   await getCurrentLocation();
+  await checkSmsPermission();
   final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {mapsImplementation.useAndroidViewSurface = true;}
  await initializeBackgroundService();
@@ -75,6 +78,14 @@ getCurrentLocation() async{
   if (permission == LocationPermission.deniedForever) {
     return Future.error(
         'Konum İzinleri Kalıcı Olarak Reddedildi.');
+  }
+}
+checkSmsPermission() async{
+  if(Platform.isAndroid){
+  result =await  Permission.sms.request();
+}
+  if(result == PermissionStatus.granted){
+    print('SMS İZNİ ALINDI!');
   }
 
 }
@@ -120,10 +131,14 @@ onStart(ServiceInstance service) async {
       position!.latitude,
       position!.longitude
   );
+
+
   Placemark pMark = placeMarks![0];
   newCompleteAddress = pMark.administrativeArea.toString().toLowerCase();
   sharedPreferences = await SharedPreferences.getInstance();
   sharedPreferences!.setString('currentCity', newCompleteAddress!.toUpperCase());
+  sharedPreferences!.setDouble('long', position!.longitude);
+  sharedPreferences!.setDouble('lat', position!.latitude);
 
 
   Timer.periodic(const Duration(seconds: 30), (timer) async {

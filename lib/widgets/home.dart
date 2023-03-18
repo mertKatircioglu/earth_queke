@@ -5,6 +5,8 @@ import 'package:earth_queke/global/globals.dart';
 import 'package:earth_queke/model/data_model.dart';
 import 'package:earth_queke/services/upper_text_formatter.dart';
 import 'package:earth_queke/view_models/queke_view_model.dart';
+import 'package:earth_queke/widgets/custom_error_dialog.dart';
+import 'package:earth_queke/widgets/custom_loading_dialog.dart';
 import 'package:earth_queke/widgets/earthqueke_item.dart';
 import 'package:earth_queke/widgets/maps_widget.dart';
 import 'package:earth_queke/screens/settings.dart';
@@ -12,11 +14,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:flutter_circular_text/circular_text/model.dart';
+import 'package:flutter_circular_text/circular_text/widget.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import '../locator.dart';
-import '../screens/chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,8 +35,14 @@ class _HomePageState extends State<HomePage> {
   var getSharedCity = '';
   var getSharedMag = 0.0;
   bool getSharedSwich = false;
+  bool isPanicActive = false;
   int dCount=0;
   String? token;
+  double? lat;
+  double? long;
+  int? tel1;
+  int? tel2;
+  int? tel3;
   DataModel? modelData = DataModel();
   final service = FlutterBackgroundService();
   TextEditingController filterController = TextEditingController();
@@ -40,11 +50,22 @@ class _HomePageState extends State<HomePage> {
 
 
   Future <void> listenSharedFilter()async{
+    isPanicActive = sharedPreferences!.getBool('isActive') ?? false;
+    sharedPreferences!.reload();
+
     if(sharedPreferences!.getBool("swich") == true){
       sharedPreferences!.reload();
       getSharedCity = sharedPreferences!.getString("city").toString();
       getSharedMag = sharedPreferences!.getDouble('mag')!;
       getSharedSwich= sharedPreferences!.getBool("swich")!;
+    }
+    if(sharedPreferences!.getDouble('lat') !=null){
+      sharedPreferences!.reload();
+      lat = sharedPreferences!.getDouble('lat');
+      long = sharedPreferences!.getDouble('long');
+      tel1 = sharedPreferences!.getInt('tel1');
+      tel2 = sharedPreferences!.getInt('tel2');
+      tel3 = sharedPreferences!.getInt('tel3');
     }
   }
 
@@ -78,7 +99,29 @@ class _HomePageState extends State<HomePage> {
   }
 
 
+  sendPanicSMS() async{
+    Navigator.pop(context);
+    showDialog(context: context, builder: (c){
+      return CustomLoadingDialog(message: 'YARDIM TALEBİNİZ İLETİLİYOR LÜTFEN SABIRLI OLUP BEKLEYİNİZ.', context: context,);
 
+    });
+    if(lat !=null && long !=null){
+      String message = "Enkaz altındayım lütfen acil yardım yönlendir! Konum bilgilerim,  Enlem: $lat, Boylam: $long";
+      List<String> recipents = ["+90$tel1", "+90$tel2","+90$tel3"];
+
+      String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
+          .catchError((onError) {
+        print(onError);
+      }).whenComplete(() {
+        Navigator.pop(context);
+        CustomErrorDialog(message: 'Konum bilginiz ve durumunuz belirlediğiniz 3 yakınınız ve kolluk kuvvetlerine iletilmiştir. Lütfen sakin kalıp yönergeleri'
+            'gözden geçiriniz.',);
+      });
+
+    }else{
+      CustomErrorDialog(message: 'Konum Servislerine izin vermediğiniz için bu servis kullanılamıyor.',);
+    }
+  }
 
 storeNotificationToken() async{
     token = await FirebaseMessaging.instance.getToken();
@@ -165,7 +208,6 @@ storeNotificationToken() async{
            }).whenComplete(() {
              listenSharedFilter();
               refreshData();
-
            });
           },
               icon: const Icon(Icons.settings, color: kPrymaryColor,)),
@@ -283,6 +325,7 @@ storeNotificationToken() async{
               child: Container(
                 margin:const EdgeInsets.symmetric(horizontal: 15),
                 child: TextFormField(
+                  autofocus: false,
                   inputFormatters: [
                     UpperCaseTextFormatter(),
                   ],
@@ -355,6 +398,72 @@ storeNotificationToken() async{
           ],
         ),
       ),
+      floatingActionButton:isPanicActive == true ?  FloatingActionButton.large(
+        backgroundColor: Colors.red.shade800,
+        onPressed: (){
+          Future.delayed(const Duration(seconds: 0), () {
+            showDialog(
+                context: context,
+                builder: (c) {
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)
+                    ),
+                    actionsAlignment: MainAxisAlignment.center,
+                    actionsPadding: EdgeInsets.zero,
+                    content: const Text(
+                        "Başınız dertte mi?",
+                        textAlign: TextAlign.center),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: ()  {
+                          sendPanicSMS();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.red),
+                        child: const Text("Evet Yardım İste!"),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.blue),
+                        child: const Text("Hayır"),
+                      ),
+                    ],
+                  );
+                });
+          });
+
+        },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            CircularText(
+              radius: 125,
+              position: CircularTextPosition.inside,
+              children: [
+                TextItem(
+                    space: 16,
+                    startAngle: -90,
+                    startAngleAlignment: StartAngleAlignment.center,
+                    direction: CircularTextDirection.clockwise,
+                    text:const Text('Panik Butonu',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, fontSize: 42),)
+                )
+
+              ],
+            ),
+            const Icon(
+              Icons.crisis_alert,
+              color: Colors.white,
+              size: 45,
+            )
+          ],
+        ),
+      ) : null,
     );
   }
 

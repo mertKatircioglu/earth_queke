@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'package:earth_queke/global/globals.dart';
+import 'package:earth_queke/main.dart';
 import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -19,13 +20,14 @@ class _MapsWdigetState extends State<MapsWdiget> {
   Completer<GoogleMapController> mapController = Completer();
 
   Set<Marker> markers = {};
+  Set<Marker> markersBlank = {};
   double distance = 0.0;
   LatLng? location;
   bool viewLocation = false;
   Set<Circle> circles ={};
-  bool _redCircles = true;
+  bool _showPin = false;
   Color? color;
-  Set<Polygon> _polygons = HashSet<Polygon>();
+  BitmapDescriptor? customIcon;
 
 
   Future<void> getMarkers() async{
@@ -38,20 +40,21 @@ class _MapsWdigetState extends State<MapsWdiget> {
          title: element["title"].toString(),
          snippet:"Şiddet: ${element["mag"]}",
        ),
-       icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+       icon: BitmapDescriptor.defaultMarker
      ));
 
      circles.add(Circle(
+       strokeColor: Colors.black87,
        circleId: CircleId(element["title"].toString()),
-       fillColor: Colors.red.withOpacity(0.3),
-       strokeWidth: 0,
+       fillColor: element["mag"] <= 2.0 ? Colors.yellow : element["mag"] <=3.0 ? Colors.orange:
+       element["mag"] <= 4.0 ? Colors.deepOrange : element["mag"] <= 5.0 ? Colors.purple
+           :element["mag"] <= 6.0 ? Colors.red: element["mag"] <= 7.0 ? Colors.red.shade700 : Colors.red.shade900,
+       strokeWidth: 2,
        center: LatLng(element["geojson"]['coordinates'][1] as double,element["geojson"]['coordinates'][0] as double),
-       radius: 40000,));
-     setState(() {
-     });
+       radius: (element["mag"] * 5500).toDouble(),));
+     setState(() {});
 
   });
-
   }
 
 
@@ -60,6 +63,11 @@ class _MapsWdigetState extends State<MapsWdiget> {
   @override
   void initState() {
     super.initState();
+/*    BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(30, 30)),
+        'images/pin.png')
+        .then((d) {
+      customIcon = d;
+    });*/
     getMarkers();
   }
 
@@ -76,16 +84,16 @@ class _MapsWdigetState extends State<MapsWdiget> {
               Container(
                 height: 50,
                 child:const Center(
-                  child: Text("Alanları Kaldır", style: TextStyle(fontSize: 10, color:Colors.black45),),
+                  child: Text("Pin Göster", style: TextStyle(fontSize: 10, color:Colors.black45),),
                 ),
               ),
               Switch.adaptive(
-                  value:  _redCircles,
+                  value:  _showPin,
                   onChanged: (newValue) {
                     setState(() {
-                      _redCircles = newValue;
+                      _showPin = newValue;
                     });
-                    circles.clear();
+
 
                   })
             ],
@@ -96,7 +104,7 @@ class _MapsWdigetState extends State<MapsWdiget> {
         },
             icon:const Icon(Icons.arrow_back, color: kPrymaryColor,)),
         title:const Text(
-          "Anlık Deprem Haritası",
+          "Deprem Haritası",
           style: TextStyle(
             color: kPrymaryColor,
           ),
@@ -107,12 +115,12 @@ class _MapsWdigetState extends State<MapsWdiget> {
         width: MediaQuery.of(context).size.width,
         child: GoogleMap(
           trafficEnabled: true,
-          circles: circles,
+          circles:circles,
           initialCameraPosition:const CameraPosition(
               target: LatLng( 39.1667,33.6667),
               zoom: 5.1
           ),
-          markers: markers,
+          markers:_showPin == true ? markers : markersBlank,
           mapType: MapType.hybrid,
           onMapCreated: (controller){
             setState((){
