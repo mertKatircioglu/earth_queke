@@ -18,7 +18,7 @@ class CustomErrorDialog extends StatelessWidget {
           onPressed: fnc !=null ? fnc : ()=> Navigator.of(context, rootNavigator: true).pop("Discard"),
 
             child: const Center(
-              child:Text('Ok', textAlign: TextAlign.center,),
+              child:Text('Tamam, yönergelere geç', textAlign: TextAlign.center,),
             ),
         )
       ],

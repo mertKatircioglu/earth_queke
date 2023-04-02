@@ -101,26 +101,34 @@ class _HomePageState extends State<HomePage> {
 
   sendPanicSMS() async{
     Navigator.pop(context);
-    showDialog(context: context, builder: (c){
-      return CustomLoadingDialog(message: 'YARDIM TALEBİNİZ İLETİLİYOR LÜTFEN SABIRLI OLUP BEKLEYİNİZ.', context: context,);
 
-    });
     if(lat !=null && long !=null){
+      showDialog(context: context, builder: (c){
+        return CustomLoadingDialog(message: 'YARDIM TALEBİNİZ İLETİLİYOR LÜTFEN SABIRLI OLUP BEKLEYİNİZ.', context: context,);
+      });
       String message = "Enkaz altındayım lütfen acil yardım yönlendir! Konum bilgilerim,  Enlem: $lat, Boylam: $long";
       List<String> recipents = ["+90$tel1", "+90$tel2","+90$tel3"];
-
       String _result = await sendSMS(message: message, recipients: recipents, sendDirect: true)
           .catchError((onError) {
-        print(onError);
+            print(onError);
+        showDialog(context: context, builder: (c){
+          return CustomErrorDialog(message: 'Bir Hata Meydana Geldi! Tekrar Deneyin ve Sabırlı Olun.');
+        });
       }).whenComplete(() {
         Navigator.pop(context);
-        CustomErrorDialog(message: 'Konum bilginiz ve durumunuz belirlediğiniz 3 yakınınız ve kolluk kuvvetlerine iletilmiştir. Lütfen sakin kalıp yönergeleri'
-            'gözden geçiriniz.',);
+        showDialog(context: context, builder: (c){
+          return CustomErrorDialog(message: 'Konum bilginiz ve durumunuz belirlediğiniz 3 yakınınız ve kolluk kuvvetlerine iletilmiştir. Lütfen sakin kalıp yönergeleri'
+              ' gözden geçiriniz.',);
+        });
+
       });
 
     }else{
-      CustomErrorDialog(message: 'Konum Servislerine izin vermediğiniz için bu servis kullanılamıyor.',);
+      showDialog(context: context, builder: (c){
+        return CustomErrorDialog(message: 'Konum Servislerine izin vermediğiniz için bu servis kullanılamıyor.',);
+      });
     }
+
   }
 
 storeNotificationToken() async{
@@ -231,9 +239,9 @@ storeNotificationToken() async{
               child: Row(
                 children: [
                    const Text(
-                    "Sismo Servis",
+                    "Sismy",
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 18,
                       color: kPrymaryColor
                     ),
                   ),
@@ -405,30 +413,24 @@ storeNotificationToken() async{
             showDialog(
                 context: context,
                 builder: (c) {
-                  return AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)
-                    ),
-                    actionsAlignment: MainAxisAlignment.center,
-                    actionsPadding: EdgeInsets.zero,
+                  return CupertinoAlertDialog(
                     content: const Text(
                         "Başınız dertte mi?",
+                        style: TextStyle(fontSize: 22),
                         textAlign: TextAlign.center),
                     actions: [
-                      ElevatedButton(
+                      CupertinoButton(
                         onPressed: ()  {
                           sendPanicSMS();
                         },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.red),
-                        child: const Text("Evet Yardım İste!"),
+
+                        child: const Text("Evet!"),
                       ),
-                      ElevatedButton(
+                      CupertinoButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.blue),
+
                         child: const Text("Hayır"),
                       ),
                     ],

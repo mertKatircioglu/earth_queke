@@ -20,6 +20,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'global/globals.dart';
 import 'locator.dart';
 import 'package:http/http.dart' as http;
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
 class MyHttpOverrides extends HttpOverrides{
@@ -65,6 +66,11 @@ Future<void> main() async{
  await initializeBackgroundService();
   //FirebaseMessaging.onBackgroundMessage(_handleBackGroundMessaging);
   runApp( const MyApp());
+  OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+  OneSignal.shared.setAppId("2abe906f-9e6f-4d8b-a408-e61663266e01");
+  OneSignal.shared.promptUserForPushNotificationPermission().then((acccepted) {
+print('İzinler: $acccepted');
+  });
 }
 
 getCurrentLocation() async{

@@ -6,6 +6,8 @@ import 'package:earth_queke/view_models/queke_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'item_detail.dart';
+
 
 class MapsWdiget extends StatefulWidget {
   EarthQuakeViewModel? eartQuekeModel;
@@ -49,9 +51,9 @@ class _MapsWdigetState extends State<MapsWdiget> {
        fillColor: element["mag"] <= 2.0 ? Colors.yellow : element["mag"] <=3.0 ? Colors.orange:
        element["mag"] <= 4.0 ? Colors.deepOrange : element["mag"] <= 5.0 ? Colors.purple
            :element["mag"] <= 6.0 ? Colors.red: element["mag"] <= 7.0 ? Colors.red.shade700 : Colors.red.shade900,
-       strokeWidth: 2,
+       strokeWidth: 1,
        center: LatLng(element["geojson"]['coordinates'][1] as double,element["geojson"]['coordinates'][0] as double),
-       radius: (element["mag"] * 5500).toDouble(),));
+       radius: (element["mag"] * 2500).toDouble(),));
      setState(() {});
 
   });

@@ -36,19 +36,25 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     "Bartın", "Ardahan", "Igdır", "Yalova", "Karabuk ", "Kılıs", "Osmanıye ", "Duzce"
   ];
 
-  List mag =[1.0,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,
+ final List<double> mag =[1.0,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,
     2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0,5.1,5.2,
     5.3,5.4,5.5,5.6,5.7,5.8,5.9,6.0,6.1,6.2,6.3,6.4,6.5,6.6,6.7,6.8,6.9,7.0,7.1,7.2,7.3,7.4,7.5];
 
   int _selectedCity = 0;
   int _selectedMag = 0;
+  int ratingAreaMag= 1;
   bool _filterSwitch = false;
   bool _panicButtonSwitch = false;
+  bool _pushNotfSwitch = true;
   bool _viewFiltered= false;
+  bool _areaQuake = true;
+  bool _generalQuake= true;
   String? currentCity ='';
   String? name1 ='';
   String? name2 ='';
   String? name3 ='';
+  int ratingMag=1;
+  int ratingGeneralMag=1;
   double searchFieldSize = 100;
   TextEditingController _name1Controller = TextEditingController();
   TextEditingController _name2Controller = TextEditingController();
@@ -115,6 +121,17 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     super.initState();
     getSharedPrefs();
 
+  }
+  Color getColor(Set<MaterialState> states) {
+    const Set<MaterialState> interactiveStates = <MaterialState>{
+      MaterialState.pressed,
+      MaterialState.hovered,
+      MaterialState.focused,
+    };
+    if (states.any(interactiveStates.contains)) {
+      return Colors.blue;
+    }
+    return Colors.red;
   }
 
   Future<void> formValidation() async{
@@ -229,6 +246,197 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                 ),
                 const Divider(thickness: 0.5, color: Colors.amber,),
                 Visibility(
+                  visible: true,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    elevation: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                height: 20,
+                                child: const Text("Bildirimler",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),),
+                              ),
+
+                              Switch.adaptive(
+                                  value:  _pushNotfSwitch,
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      _pushNotfSwitch = newValue;
+                                    });
+                                  })
+                            ],
+                          ),
+                          const Text("Bu özellik, bulunduğunuz bölge ve Türkiye'de yaşanan depremlerin bildirimlerini size anlık olarak gönderilmesini sağlar.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
+                          ),
+                          Visibility(
+                            visible: _pushNotfSwitch,
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(4.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.amber.shade50,
+                                      borderRadius: BorderRadius.circular(10.0)
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        child:const Text("Bölgesel Deprem Bildirimleri",
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(fontSize: 14),),
+                                      ),
+                                      Checkbox(
+                                        checkColor: Colors.white,
+                                        fillColor: MaterialStateProperty.resolveWith(getColor),
+                                        value: _areaQuake,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            _areaQuake = value!;
+                                          });
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: _areaQuake,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: [
+                                              const Text("Mag:", style: TextStyle(fontSize: 14),),
+                                              Text(
+                                                '${mag[ratingAreaMag]}',
+                                                style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                    color:Colors.blue
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Slider(
+                                          value: ratingAreaMag.toDouble(),
+                                          min: 0,
+                                          max: mag.length-1,
+                                          activeColor: Colors.red,
+                                          divisions: mag.length -1,
+                                          label: mag[ratingAreaMag].toString(),
+                                          onChanged: (double value){
+                                            setState(() {
+                                              ratingAreaMag = value.toInt();
+                                            });
+                                          },
+                                        ),
+                                      ),
+
+
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 20,),
+                                Container(
+                                  padding: const EdgeInsets.all(4.0),
+                                  decoration: BoxDecoration(
+                                      color: Colors.amber.shade50,
+                                      borderRadius: BorderRadius.circular(10.0)
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        child:const Text("Türkiye Geneli Deprem Bildirimleri",
+                                          textAlign: TextAlign.left,
+                                          style: TextStyle(fontSize: 14),),
+                                      ),
+                                      Checkbox(
+                                        checkColor: Colors.white,
+                                        fillColor: MaterialStateProperty.resolveWith(getColor),
+                                        value: _generalQuake,
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            _generalQuake = value!;
+                                          });
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: _generalQuake,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            const Text("Mag:", style: TextStyle(fontSize: 14),),
+                                            Text(
+                                              '${mag[ratingGeneralMag]}',
+                                              style: const TextStyle(
+                                                  fontSize: 14.0,
+                                                  color:Colors.blue
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Slider(
+                                          value: ratingGeneralMag.toDouble(),
+                                          min: 0,
+                                          max: mag.length-1,
+                                          activeColor: Colors.red,
+                                          divisions: mag.length-1,
+                                          label: mag[ratingGeneralMag].toString(),
+                                          onChanged: (newRating){
+                                            setState(() {
+                                              ratingGeneralMag = newRating.toInt();
+                                            });
+                                          },
+                                        ),
+                                      ),
+
+
+                                    ],
+                                  ),
+                                ),
+                                // LineChartSample5(dataModel: earthQuakeViewModel)
+                              ],
+                            ),
+                          )
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const Divider(thickness: 0.5, color: Colors.amber,),
+                Visibility(
                   visible: !getSharedSwichPanic,
                   child: Card(
                     shape: RoundedRectangleBorder(
@@ -276,6 +484,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                     child: TextFormField(
                                       controller: _name1Controller,
                                       autofocus: false,
+                                      maxLength: 20,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
                                         focusColor: Colors.white,
@@ -365,6 +574,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                     child: TextFormField(
                                       controller: _name2Controller,
                                       autofocus: false,
+                                      maxLength: 20,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
                                         focusColor: Colors.white,
@@ -451,7 +661,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                     child: TextFormField(
                                       controller: _name3Controller,
                                       autofocus: false,
-                                      keyboardType: TextInputType.phone,
+                                      maxLength: 20,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
                                         focusColor: Colors.white,
@@ -616,23 +826,47 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                               backgroundColor: Colors.redAccent,
                             ),
                             onPressed: () async{
-                              sharedPreferences = await SharedPreferences.getInstance();
-                              sharedPreferences!.remove('name1');
-                              sharedPreferences!.remove('name2');
-                              sharedPreferences!.remove('name3');
-                              sharedPreferences!.remove('tel1');
-                              sharedPreferences!.remove('tel2');
-                              sharedPreferences!.remove('tel3');
-                              sharedPreferences!.remove('isActive');
-                              setState(() {
-                                getSharedSwichPanic = false;
-                                _panicButtonSwitch = false;
-                              });
-                              MotionToast.delete(
-                                title:  const Text("Bilgi"),
-                                description:  const Text("Panik özelliği iptal edildi."),
-                              ).show(context);
+                              Future.delayed(const Duration(seconds: 0), () {
+                                showDialog(
+                                    context: context,
+                                    builder: (c) {
+                                      return CupertinoAlertDialog(
+                                        content: const Text(
+                                            "Panik özelliğini kaldırmak istediğinize emin misiniz ?",
+                                            style: TextStyle(fontSize: 14),
+                                            textAlign: TextAlign.center),
+                                        actions: [
+                                          CupertinoButton(
+                                            onPressed: ()  async{
+                                              sharedPreferences = await SharedPreferences.getInstance();
+                                              sharedPreferences!.remove('name1');
+                                              sharedPreferences!.remove('name2');
+                                              sharedPreferences!.remove('name3');
+                                              sharedPreferences!.remove('tel1');
+                                              sharedPreferences!.remove('tel2');
+                                              sharedPreferences!.remove('tel3');
+                                              sharedPreferences!.remove('isActive');
+                                              setState(() {
+                                                getSharedSwichPanic = false;
+                                                _panicButtonSwitch = false;
+                                              });
+                                              MotionToast.delete(
+                                                description: Text("Panik özelliği iptal edildi."),
+                                              ).show(context);                                            },
 
+                                            child: const Text("Evet"),
+                                          ),
+                                          CupertinoButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+
+                                            child: const Text("Hayır"),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              });
                             },
                             child:const Text( "İptal Et",
                               style: TextStyle(color: Colors.white),),
@@ -642,7 +876,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                 ),
-
                 const Divider(thickness: 0.5, color: Colors.amber,),
                 Visibility(
                   visible: !_viewFiltered,
@@ -677,139 +910,145 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           style: TextStyle(fontStyle: FontStyle.italic, fontSize: 10),
                         ),
                         const SizedBox(height: 10,),
-                      ],
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: _filterSwitch,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    elevation: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 5),
-                        Container(
-                          height: 50,
-                          child:const Center(
-                            child: Text("Şehir: ", style: TextStyle(fontSize: 14),),
-                          ),
-                        ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () => _showDialog(
-                                CupertinoPicker(
-                                  magnification: 1.22,
-                                  squeeze: 1.2,
-                                  useMagnifier: true,
-                                  itemExtent: _kItemExtent,
-                                  onSelectedItemChanged: (int selectedItem) {
-                                    setState(() {
-                                      _selectedCity = selectedItem;
-                                    });
-                                  },
-                                  children:
-                                  List<Widget>.generate(city.length, (int index) {
-                                    return Center(
-                                      child: Text(
-                                        city[index],
-                                      ),
-                                    );
-                                  }),
-                                ),
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 5),
+                            Container(
+                              height: 50,
+                              child:const Center(
+                                child: Text("Şehir: ", style: TextStyle(fontSize: 14),),
                               ),
-                              // This displays the selected fruit name.
-                              child: Row(
-                                children: [
-                                  Text(
-                                    city[_selectedCity],
-                                    style: const TextStyle(
-                                      fontSize: 14.0,
-                                      color:  Colors.blue,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () => _showDialog(
+                                    CupertinoPicker(
+                                      magnification: 1.22,
+                                      squeeze: 1.2,
+                                      useMagnifier: true,
+                                      itemExtent: _kItemExtent,
+                                      onSelectedItemChanged: (int selectedItem) {
+                                        setState(() {
+                                          _selectedCity = selectedItem;
+                                        });
+                                      },
+                                      children:
+                                      List<Widget>.generate(city.length, (int index) {
+                                        return Center(
+                                          child: Text(
+                                            city[index],
+                                          ),
+                                        );
+                                      }),
                                     ),
                                   ),
-                                  const SizedBox(width: 10,),
-                                  const Icon(Icons.arrow_drop_down, color: Colors.blue,),
-                                ],
+                                  // This displays the selected fruit name.
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        city[_selectedCity],
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
+                                          color:  Colors.blue,
+                                        ),
+                                      ),
+                                      const Icon(Icons.arrow_drop_down, color: Colors.blue,),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 5),
+                            Container(
+                              height: 50,
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const Text("Mag:", style: TextStyle(fontSize: 14),),
+                                    Text(
+                                      '${mag[ratingMag]}',
+                                      style: const TextStyle(
+                                          fontSize: 14.0,
+                                          color:Colors.blue
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: ratingMag.toDouble(),
+                                min: 0,
+                                max: mag.length -1,
+                                activeColor: Colors.red,
+                                divisions: mag.length-1,
+                                label: '${mag[ratingMag]}',
+                                onChanged: (newRating){
+                                  setState(() {
+                                    ratingMag = newRating.toInt();
+                                  });
+                                },
                               ),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: _filterSwitch,
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    elevation: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 5),
-                        Container(
-                          height: 50,
-                          child:const Center(
-                            child: Text("Şiddet: ", style: TextStyle(fontSize: 14),),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            CupertinoButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () => _showDialog(
-                                CupertinoPicker(
-                                  magnification: 1.22,
-                                  squeeze: 1.2,
-                                  useMagnifier: true,
-                                  itemExtent: _kItemExtent,
-                                  onSelectedItemChanged: (int selectedItem) {
-                                    setState(() {
-                                      _selectedMag = selectedItem;
-                                    });
-                                  },
-                                  children:
-                                  List<Widget>.generate(mag.length, (int index) {
-                                    return Center(
-                                      child: Text(
-                                        mag[index].toString(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                backgroundColor: kPrymaryColor,
+                              ),
+                              onPressed: () async{
+                                //Workmanager().cancelAll();
+                                if(_filterSwitch == true){
+                                  _saveSettings(city[_selectedCity].toString(),mag[ratingMag],true, true).whenComplete(() {
+                                    MotionToast.success(
+                                      onClose: (){
+                                        Navigator.pop(context, true);
+                                      },
+                                      dismissable: false,
+                                      animationDuration: const Duration(milliseconds: 900),
+                                      title:  const Text("Başarılı!"),
+                                      description:  const Text("Ayarınız başarılya kaydedildi."),
+                                    ).show(context);
+                                  });
 
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                              // This displays the selected fruit name.
-                              child: Row(
-                                children: [
-                                  Text(
-                                    mag[_selectedMag].toString(),
-                                    style: const TextStyle(
-                                        fontSize: 14.0,
-                                        color:Colors.blue
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10,),
-                                  const Icon(Icons.arrow_drop_down, color: Colors.blue,),
-                                ],
-                              ),
+                                }else{
+                                  MotionToast.warning(
+                                    title:  const Text("Dikkat!"),
+                                    description:  const Text("Lütfen filtrelemeyi etkinleştirin."),
+                                  ).show(context);
+                                }
+                              },
+                              child:const Text( "Kaydet",
+                                style: TextStyle(color: Colors.white),),
                             ),
-                          ],
-                        ),
+                          ),
+                        )
                       ],
                     ),
                   ),
                 ),
+
                 Visibility(
                   visible: _viewFiltered,
                   child:Card(
@@ -825,7 +1064,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                           child: Container(
                             height: 50,
                             child:const Center(
-                              child: Text("Seçilen Filtre: ", style: TextStyle(fontSize: 14),),
+                              child: Text("Dinlenen şehir: ", style: TextStyle(fontSize: 14),),
                             ),
                           ),
                         ),
@@ -865,12 +1104,11 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                                     _filterSwitch = false;
                                   });
                                   MotionToast.info(
-                                    title:  const Text("Bilgi"),
-                                    description:  const Text("Filtre kaldırıldı."),
+                                    description:  const Text("Dinleme Özelliği İptal Edildi"),
                                   ).show(context);
 
                                 },
-                                child:const Text( "Filtreyi Kaldır",
+                                child:const Text( "İptal",
                                   style: TextStyle(color: Colors.white),),
                               ),
                             )
@@ -880,56 +1118,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                   ),
                 ),
-                /*  Visibility(
-                  visible: !_viewFiltered,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Bildirim Gönder: "),
-                      Switch(value: _enabled, onChanged: _onClickEnable),
-                    ],
-                  ),
-                ),*/
 
-                Visibility(
-                  visible: _filterSwitch,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        backgroundColor: kPrymaryColor,
-                      ),
-                      onPressed: () async{
-                        //Workmanager().cancelAll();
-                        if(_filterSwitch == true){
-                          _saveSettings(city[_selectedCity].toString(),mag[_selectedMag],true, true).whenComplete(() {
-                            MotionToast.success(
-                              onClose: (){
-                                Navigator.pop(context, true);
-                              },
-                              dismissable: false,
-                              animationDuration: const Duration(milliseconds: 900),
-                              title:  const Text("Başarılı!"),
-                              description:  const Text("Ayarınız başarılya kaydedildi."),
-                            ).show(context);
-                          });
-
-                        }else{
-                          MotionToast.warning(
-                            title:  const Text("Dikkat!"),
-                            description:  const Text("Lütfen filtrelemeyi etkinleştirin."),
-                          ).show(context);
-                        }
-                      },
-                      child:const Text( "Kaydet",
-                        style: TextStyle(color: Colors.white),),
-                    ),
-                  ),
-                ),
 
                 const SizedBox(height: 50,)
               ],
