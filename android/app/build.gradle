@@ -29,7 +29,6 @@ android {
     ndkVersion flutter.ndkVersion
 
     compileOptions {
-        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -52,7 +51,6 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
-
     }
 
     buildTypes {
@@ -76,6 +74,8 @@ dependencies {
     implementation "com.google.firebase:firebase-analytics:21.2.0"
     implementation platform('com.google.firebase:firebase-bom:31.0.2')
     implementation "com.google.firebase:firebase-messaging:23.1.0"
+    implementation 'com.google.android.gms:play-services-nearby:18.5.0'
+
 
 }
 apply plugin: 'com.google.gms.google-services'

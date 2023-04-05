@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:earth_queke/global/globals.dart';
 import 'package:earth_queke/model/data_model.dart';
@@ -17,10 +18,14 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_circular_text/circular_text/model.dart';
 import 'package:flutter_circular_text/circular_text/widget.dart';
 import 'package:flutter_sms/flutter_sms.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nearby_connections/nearby_connections.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import '../locator.dart';
+import '../screens/bt_chat_devices.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -219,6 +224,19 @@ storeNotificationToken() async{
            });
           },
               icon: const Icon(Icons.settings, color: kPrymaryColor,)),
+          IconButton(onPressed: ()async{
+            await Nearby().checkLocationPermission().then((value) {
+              value == true ? Nearby().checkBluetoothPermission().then((value) {
+                value == true ? Navigator.push(context, MaterialPageRoute(builder: (context)=>BtChatDevices())) :
+                    Nearby().askBluetoothPermission();
+              }):
+              Nearby().askLocationPermission();
+            }) ;
+
+
+
+          },
+              icon: const Icon(Icons.chat, color: kPrymaryColor,)),
         ],
         elevation: 0,
         backgroundColor: kBackGroundColor,

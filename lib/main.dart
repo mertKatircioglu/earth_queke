@@ -61,6 +61,11 @@ Future<void> main() async{
   setupLocator();
   await getCurrentLocation();
   await checkSmsPermission();
+  await checkBt();
+  await checkBtConnection();
+  await checkBtScan();
+  await chechBtServices();
+  await checkNearbyDevices();
   final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {mapsImplementation.useAndroidViewSurface = true;}
  await initializeBackgroundService();
@@ -91,10 +96,51 @@ checkSmsPermission() async{
   result =await  Permission.sms.request();
 }
   if(result == PermissionStatus.granted){
-    print('SMS İZNİ ALINDI!');
+    print('sms izni verildi');
   }
 
 }
+checkBt() async{
+  if(Platform.isAndroid){
+    result =await  Permission.bluetooth.request();
+  }
+  if(result == PermissionStatus.granted){
+    print('bt izni verildi!');
+  }
+}
+checkBtConnection() async{
+  if(Platform.isAndroid){
+    result =await  Permission.bluetoothConnect.request();
+  }
+  if(result == PermissionStatus.granted){
+    print('bt connect izni verildi');
+  }
+}
+checkBtScan() async{
+  if(Platform.isAndroid){
+    result =await  Permission.bluetoothScan.request();
+  }
+  if(result == PermissionStatus.granted){
+    print('bt scan izni verildi');
+  }
+}
+chechBtServices() async{
+  if(Platform.isAndroid){
+    result =await  Permission.bluetoothAdvertise.request();
+  }
+  if(result == PermissionStatus.granted){
+    print('bt advertise izni verildi');
+  }
+}
+checkNearbyDevices() async{
+  if(Platform.isAndroid){
+    result =await  Permission.nearbyWifiDevices.request();
+  }
+  if(result == PermissionStatus.granted){
+    print('nearby wifi izni verildi');
+  }
+}
+
 
 initializeBackgroundService() async {
   final service = FlutterBackgroundService();
