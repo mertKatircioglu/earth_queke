@@ -4,21 +4,22 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:vibration/vibration.dart';
+
+import '../global/globals.dart';
 
 class Chat extends StatefulWidget{
   String userName;
   Device connected_device;
   NearbyService nearbyService;
   var chat_state;
+  List<ChatMessage> receiveMessages= [];
 
-  Chat({ required this.connected_device, required this.nearbyService, required this.userName});
+  Chat({ required this.connected_device, required this.nearbyService, required this.userName,required this.receiveMessages});
 
 
   @override
   State<StatefulWidget> createState()  => _Chat();
-
-
-
 
 }
 class _Chat extends State<Chat>{
@@ -26,8 +27,9 @@ class _Chat extends State<Chat>{
   late StreamSubscription receivedDataSubscription;
   List<ChatMessage> messages = [];
   final myController = TextEditingController();
-  void addMessgeToList(ChatMessage  obj){
 
+  void addMessgeToList(ChatMessage  obj){
+    Vibration.vibrate(duration: 100);
     setState(() {
       messages.insert(0, obj);
     });
@@ -45,6 +47,9 @@ class _Chat extends State<Chat>{
     receivedDataSubscription.cancel();
   }
   void init(){
+    if(widget.receiveMessages.isNotEmpty){
+      messages.addAll(widget.receiveMessages);
+    }
     receivedDataSubscription =
         this.widget.nearbyService.dataReceivedSubscription(callback: (data) {
           var obj = ChatMessage(messageContent: data["message"], messageType: "receiver");
@@ -93,13 +98,14 @@ class _Chat extends State<Chat>{
           ),
         ),
       ),
+      backgroundColor: kBackGroundColor,
       body: Stack(
         children: <Widget>[
           ListView.builder(
             itemCount: messages.length,
             reverse: true,
             shrinkWrap: true,
-            padding: const EdgeInsets.only(top: 10,bottom: 10),
+            padding: const EdgeInsets.only(top: 10,bottom: 70),
             itemBuilder: (context, index){
               return Container(
                 padding: const EdgeInsets.only(left: 10,right: 14,top: 10,bottom: 10),
@@ -108,7 +114,7 @@ class _Chat extends State<Chat>{
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade200:Colors.green[300]),
+                      color: (messages[index].messageType  == "receiver"?Colors.grey.shade200:Colors.amber[300]),
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Text(messages[index].messageContent, style: const TextStyle(fontSize: 15),),
@@ -142,9 +148,9 @@ class _Chat extends State<Chat>{
                       addMessgeToList(obj);
                       myController.text = "";
                     },
-                    backgroundColor: Colors.green[700],
+                    backgroundColor: Colors.amber[700],
                     elevation: 0,
-                    child: const Icon(Icons.send,color: Colors.white,size: 18,textDirection: TextDirection.rtl,),
+                    child: const Icon(Icons.send,color: Colors.white,size: 18,textDirection: TextDirection.ltr,),
                   ),
                   const SizedBox(width: 15,),
 

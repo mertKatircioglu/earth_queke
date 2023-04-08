@@ -230,24 +230,32 @@ storeNotificationToken() async{
                   builder: (c) {
                     return CupertinoAlertDialog(
                       content: const Text(
-                          "Bluetooth & Wi-fi donanımınız ile iletişim kurun",
+                          "Acil Durum Merkezi\nBu bölümden wi-fi & blutooth donanımınızı kullanarak aynı uygulamayı kullanan diğer insanlara, "
+                              "şebeke veya internet bağlantısı gerekmeksizin bağlantı ve iletişim kurmanızı sağlar.",
                           style: TextStyle(fontSize: 12),
                           textAlign: TextAlign.center),
                       actions: [
                         CupertinoButton(
                           onPressed: ()  {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const BtChatDevices(deviceType: DeviceType.advertiser)));
-                          },
+                            Navigator.push(context, MaterialPageRoute(builder:
+                                (context)=>const BtChatDevices(deviceType: DeviceType.advertiser))).whenComplete(() {
+                              Navigator.pop(context);
 
-                          child: const Text("Yayıncı"),
+                            });
+
+                          },
+                          child: const Text("Acil Durum Sinyallerini Tara"),
                         ),
                         CupertinoButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const BtChatDevices(deviceType: DeviceType.browser)));
+                            Navigator.push(context, MaterialPageRoute(builder:
+                                (context)=>const BtChatDevices(deviceType: DeviceType.browser))).whenComplete(() {
+                              Navigator.pop(context);
+                            });
 
                           },
 
-                          child: const Text("Tarayıcı"),
+                          child: const Text("Acil Durum Sinyali Gönder"),
                         ),
                       ],
                     );

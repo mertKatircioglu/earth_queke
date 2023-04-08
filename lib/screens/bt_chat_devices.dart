@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:lottie/lottie.dart';
+import 'package:vibration/vibration.dart';
 
 import '../widgets/chat.dart';
 
@@ -25,20 +27,28 @@ class BtChatDevices extends StatefulWidget {
 class _BtChatDevicesState extends State<BtChatDevices> {
   List<Device> devices = [];
   List<Device> connectedDevices = [];
+  List<ChatMessage> messagesList = [];
   late NearbyService nearbyService;
   late StreamSubscription subscription;
+  late StreamSubscription subscriptionReceiverChats;
   bool loading= false;
   late Chat activity;
   bool isInit = false;
   String loadingMessage= "";
+  String pageTitle= "";
+  String lottiAsset= "";
 
   @override
   void initState() {
     super.initState();
     if(widget.deviceType ==DeviceType.advertiser ){
-      loadingMessage ="Yardım çağrıları taranıyor. Lütfen bekleyiniz...";
+      loadingMessage ="Acil durumda olan kullanıcılar taranıyor. Lütfen bekleyiniz...";
+      pageTitle="Acil Durum Alıcısı";
+      lottiAsset="images/radar.json";
     } else if(widget.deviceType == DeviceType.browser){
-      loadingMessage ="Çevrenizde yardım arayan kişiler aranıyor. Lütfen bekleyiniz...";
+      pageTitle="Acil Durum Vericisi";
+      lottiAsset="images/radio.json";
+      loadingMessage ="Acil durum sinyaliniz çevrenizdeki cihazlara iletiliyor. Lütfen bekleyiniz...";
     }
     init();
   }
@@ -46,6 +56,7 @@ class _BtChatDevicesState extends State<BtChatDevices> {
   @override
   void dispose() {
     subscription.cancel();
+    subscriptionReceiverChats.cancel();
     nearbyService.stopBrowsingForPeers();
     nearbyService.stopAdvertisingPeer();
     super.dispose();
@@ -64,7 +75,7 @@ class _BtChatDevicesState extends State<BtChatDevices> {
       },
           icon:const Icon(Icons.arrow_back, color: kPrymaryColor,)),
       title: Text(
-        widget.deviceType!.name,
+        pageTitle,
         style: const TextStyle(
           color: kPrymaryColor,
         ),
@@ -137,7 +148,7 @@ class _BtChatDevicesState extends State<BtChatDevices> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => Chat(userName: authUser.currentUser!.displayName!,
-                                            connected_device: device,nearbyService: nearbyService)),
+                                            connected_device: device,nearbyService: nearbyService, receiveMessages: messagesList,)),
                                   );
                                 }else{
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -146,18 +157,48 @@ class _BtChatDevicesState extends State<BtChatDevices> {
                                   ));
                                 }
                               },
-                              child: Container(
-                                  margin: const EdgeInsets.all(3.0),
-                                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: Colors.amber)
+                              child: Stack(
+                                children: [
+                                  Container(
+                                      margin: const EdgeInsets.all(3.0),
+                                      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(color: Colors.amber)
+                                      ),
+                                      child: const Text("Görüşmeye Başla", style:TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.amber
+                                      ))),
+                                   Visibility(
+                                     visible: messagesList.isNotEmpty ? true : false,
+                                     child: Positioned(
+                                      right: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(1),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 18,
+                                          minHeight: 18,
+                                        ),
+                                        child: Text(
+                                          messagesList.length.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                   ),
-                                  child: const Text("Görüşmeye Başla", style:TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.amber
-                                  ))),
+                                   )
+                                ],
+                              ),
                             ),
                           )
                         ],
@@ -171,7 +212,7 @@ class _BtChatDevicesState extends State<BtChatDevices> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children:  [
-              const CupertinoActivityIndicator(),
+                  Lottie.asset(lottiAsset),
               Text(loadingMessage, textAlign: TextAlign.center,)
           ],
         ),
@@ -291,7 +332,6 @@ class _BtChatDevicesState extends State<BtChatDevices> {
         callback: (isRunning) async {
           if (isRunning) {
             if (widget.deviceType == DeviceType.browser) {
-
               await nearbyService.stopBrowsingForPeers();
               await Future.delayed(Duration(microseconds: 200));
               await nearbyService.startBrowsingForPeers();
@@ -304,6 +344,14 @@ class _BtChatDevicesState extends State<BtChatDevices> {
             }
           }
         });
+
+    subscriptionReceiverChats = nearbyService.dataReceivedSubscription(callback: (data) {
+      var obj = ChatMessage(messageContent: data["message"], messageType: "receiver");
+      setState(() {
+        messagesList.insert(0, obj);
+      });
+    });
+
     subscription =
         nearbyService.stateChangedSubscription(callback: (devicesList) {
           devicesList.forEach((element) {
@@ -311,6 +359,7 @@ class _BtChatDevicesState extends State<BtChatDevices> {
             if (Platform.isAndroid) {
               if (element.state == SessionState.connected) {
                 nearbyService.stopBrowsingForPeers();
+
               } else {
                 nearbyService.startBrowsingForPeers();
               }
@@ -320,6 +369,9 @@ class _BtChatDevicesState extends State<BtChatDevices> {
           setState(() {
             devices.clear();
             devices.addAll(devicesList);
+            Vibration.vibrate(
+              pattern: [500],
+            );
             loading = false;
             connectedDevices.clear();
             connectedDevices.addAll(devicesList
