@@ -20,8 +20,7 @@ import 'package:flutter_circular_text/circular_text/widget.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nearby_connections/nearby_connections.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import '../locator.dart';
@@ -225,16 +224,35 @@ storeNotificationToken() async{
           },
               icon: const Icon(Icons.settings, color: kPrymaryColor,)),
           IconButton(onPressed: ()async{
-            await Nearby().checkLocationPermission().then((value) {
-              value == true ? Nearby().checkBluetoothPermission().then((value) {
-                value == true ? Navigator.push(context, MaterialPageRoute(builder: (context)=>BtChatDevices())) :
-                    Nearby().askBluetoothPermission();
-              }):
-              Nearby().askLocationPermission();
-            }) ;
+            Future.delayed(const Duration(seconds: 0), () {
+              showDialog(
+                  context: context,
+                  builder: (c) {
+                    return CupertinoAlertDialog(
+                      content: const Text(
+                          "Bluetooth & Wi-fi donanımınız ile iletişim kurun",
+                          style: TextStyle(fontSize: 12),
+                          textAlign: TextAlign.center),
+                      actions: [
+                        CupertinoButton(
+                          onPressed: ()  {
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const BtChatDevices(deviceType: DeviceType.advertiser)));
+                          },
 
+                          child: const Text("Yayıncı"),
+                        ),
+                        CupertinoButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const BtChatDevices(deviceType: DeviceType.browser)));
 
+                          },
 
+                          child: const Text("Tarayıcı"),
+                        ),
+                      ],
+                    );
+                  });
+            });
           },
               icon: const Icon(Icons.chat, color: kPrymaryColor,)),
         ],

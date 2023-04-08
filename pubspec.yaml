@@ -64,9 +64,11 @@ dependencies:
   permission_handler: ^10.2.0
   onesignal_flutter: ^3.5.1
   supercharged: ^2.1.1
-  nearby_connections: ^3.3.0
   get: ^4.6.5
   simple_animations: 3.1.1
+  flutter_nearby_connections: 1.1.1
+  device_info:
+  flutter_udid:
 
 
 
