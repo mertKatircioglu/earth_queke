@@ -2,10 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-<key>BGTaskSchedulerPermittedIdentifiers</key>
-<array>
-    <string>dev.flutter.background.refresh</string>
-</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.flutter.background.refresh</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -48,6 +48,16 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>NSLocationUsageDescription</key>
+	<string>Size deprem anında yardımcı olabilmemiz için lütfen konum servislerine izin verin.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Size deprem anında yardımcı olabilmemiz için lütfen konum servislerine izin verin.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Size deprem anında yardımcı olabilmemiz için lütfen konum servislerine izin verin.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Size deprem anında yardımcı olabilmemiz için lütfen konum servislerine izin verin.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
 </plist>
