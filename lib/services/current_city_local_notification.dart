@@ -22,7 +22,7 @@ void showNotificationMessageCurrentCity(String? description, String? title) {
   flutterLocalNotificationsPlugin.initialize(initSettings);
 
 
-  String groupKey = 'com.example.earth_queke-high_importance_channel';
+  String groupKey = 'com.example.sismy-high_importance_channel';
   var androidPlatformChannelSpecifics =  AndroidNotificationDetails(
     'high_importance_channel',
     'high_importance_channel',

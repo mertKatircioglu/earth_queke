@@ -1,5 +1,5 @@
-import 'package:earth_queke/global/globals.dart';
-import 'package:earth_queke/model/panic_persons.dart';
+import 'package:sismy/global/globals.dart';
+import 'package:sismy/model/panic_persons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/settings_model.dart';

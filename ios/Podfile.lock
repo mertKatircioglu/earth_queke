@@ -613,6 +613,8 @@ PODS:
     - firebase_core
     - Flutter
     - nanopb (< 2.30910.0, >= 2.30908.0)
+  - device_info (0.0.1):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/Analytics (10.7.0):
@@ -707,8 +709,14 @@ PODS:
     - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
+  - flutter_nearby_connections (0.0.1):
+    - Flutter
+    - SwiftyJSON (~> 4.0)
   - flutter_sms (1.1.0):
     - Flutter
+  - flutter_udid (0.0.1):
+    - Flutter
+    - SAMKeychain
   - geocoding_ios (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -856,14 +864,17 @@ PODS:
   - permission_handler_apple (9.0.4):
     - Flutter
   - PromisesObjC (2.2.0)
+  - SAMKeychain (1.5.3)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - SwiftyJSON (4.3.0)
   - url_launcher_ios (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - device_info (from `.symlinks/plugins/device_info/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
@@ -872,7 +883,9 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
+  - flutter_nearby_connections (from `.symlinks/plugins/flutter_nearby_connections/ios`)
   - flutter_sms (from `.symlinks/plugins/flutter_sms/ios`)
+  - flutter_udid (from `.symlinks/plugins/flutter_udid/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
@@ -910,10 +923,14 @@ SPEC REPOS:
     - nanopb
     - OneSignalXCFramework
     - PromisesObjC
+    - SAMKeychain
+    - SwiftyJSON
 
 EXTERNAL SOURCES:
   cloud_firestore:
     :path: ".symlinks/plugins/cloud_firestore/ios"
+  device_info:
+    :path: ".symlinks/plugins/device_info/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_analytics:
@@ -930,8 +947,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_background_service_ios/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
+  flutter_nearby_connections:
+    :path: ".symlinks/plugins/flutter_nearby_connections/ios"
   flutter_sms:
     :path: ".symlinks/plugins/flutter_sms/ios"
+  flutter_udid:
+    :path: ".symlinks/plugins/flutter_udid/ios"
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
@@ -956,6 +977,7 @@ SPEC CHECKSUMS:
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   cloud_firestore: 84f58b426bd8d21a22c4b19d9d18028fc4ff3eb1
+  device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   device_info_plus: e5c5da33f982a436e103237c0c85f9031142abed
   Firebase: 0219acf760880eeec8ce479895bd7767466d9f81
   firebase_analytics: d0dc6091359fa4d01e8d23d70d4093e5b59a9b4a
@@ -972,7 +994,9 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
+  flutter_nearby_connections: 68c6cb88dcbf781e74adac01f4e93b853a30ee34
   flutter_sms: 91ce41530f55c85d6524d82307a5d555844c086a
+  flutter_udid: 0848809dbed4c055175747ae6a45a8b4f6771e1c
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   google_maps_flutter_ios: 3e0b99383a8003b8169d06e7e324170bd0424105
@@ -994,7 +1018,9 @@ SPEC CHECKSUMS:
   OneSignalXCFramework: 087934ab0d4d7445fcf1c015c7c782359e26c020
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
+  SAMKeychain: 483e1c9f32984d50ca961e26818a534283b4cd5c
   shared_preferences_foundation: 986fc17f3d3251412d18b0265f9c64113a8c2472
+  SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
 PODFILE CHECKSUM: fda8214b7895a2b5d225dd2e621d59618c9f9a11

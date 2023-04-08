@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:earth_queke/global/globals.dart';
+import 'package:sismy/global/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lottie/lottie.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:collection';
-import 'package:earth_queke/global/globals.dart';
-import 'package:earth_queke/main.dart';
-import 'package:earth_queke/view_models/queke_view_model.dart';
+import 'package:sismy/global/globals.dart';
+import 'package:sismy/main.dart';
+import 'package:sismy/view_models/queke_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 

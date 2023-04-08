@@ -1,4 +1,4 @@
-package com.example.earth_queke
+package com.example.sismy
 
 import io.flutter.embedding.android.FlutterActivity
 

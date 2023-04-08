@@ -1,7 +1,7 @@
-import 'package:earth_queke/global/globals.dart';
-import 'package:earth_queke/model/panic_persons.dart';
-import 'package:earth_queke/model/settings_model.dart';
-import 'package:earth_queke/view_models/queke_view_model.dart';
+import 'package:sismy/global/globals.dart';
+import 'package:sismy/model/panic_persons.dart';
+import 'package:sismy/model/settings_model.dart';
+import 'package:sismy/view_models/queke_view_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';

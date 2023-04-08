@@ -1,5 +1,5 @@
-import 'package:earth_queke/global/globals.dart';
-import 'package:earth_queke/view_models/queke_view_model.dart';
+import 'package:sismy/global/globals.dart';
+import 'package:sismy/view_models/queke_view_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

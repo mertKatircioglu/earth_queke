@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info/device_info.dart';
-import 'package:earth_queke/global/globals.dart';
+import 'package:sismy/global/globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:earth_queke/data/queke_repository.dart';
+import 'package:sismy/data/queke_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../locator.dart';
